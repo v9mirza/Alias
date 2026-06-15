@@ -54,6 +54,14 @@ export const sendRequest = async (req, res, next) => {
       });
     }
 
+    // Clear out any old accepted/rejected requests between these users
+    await ChatRequest.deleteMany({
+      $or: [
+        { sender: senderId, receiver: receiverId, status: { $ne: 'pending' } },
+        { sender: receiverId, receiver: senderId, status: { $ne: 'pending' } }
+      ]
+    });
+
     // 5. Create request
     const request = await ChatRequest.create({
       sender: senderId,
@@ -61,6 +69,18 @@ export const sendRequest = async (req, res, next) => {
       isTemporary,
       expiryDuration: isTemporary ? expiryDuration || '24h' : null
     });
+
+    // Emit Socket.IO event to recipient
+    const io = req.app.get('io');
+    if (io) {
+      const populatedRequest = await ChatRequest.findById(request._id).populate(
+        'sender',
+        'username bio interests isOnline lastSeen'
+      );
+      if (populatedRequest) {
+        io.to(receiverId).emit('request_received', { request: populatedRequest });
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -193,6 +213,71 @@ export const acceptRequest = async (req, res, next) => {
       }
     }
 
+    // Emit Socket.IO event to participants
+    const io = req.app.get('io');
+    if (io) {
+      const populatedConv = await Conversation.findById(conversation._id).populate(
+        'participants',
+        'username isOnline lastSeen bio interests'
+      );
+      if (populatedConv) {
+        // Format for sender (request.sender)
+        const senderOtherParticipant = populatedConv.participants.find(
+          (p) => p._id.toString() === request.receiver.toString()
+        );
+        const senderConvData = {
+          _id: populatedConv._id.toString(),
+          participants: populatedConv.participants.map((p) => ({
+            id: p._id.toString(),
+            username: p.username
+          })),
+          otherParticipant: senderOtherParticipant
+            ? {
+                id: senderOtherParticipant._id.toString(),
+                username: senderOtherParticipant.username,
+                isOnline: senderOtherParticipant.isOnline,
+                lastSeen: senderOtherParticipant.lastSeen
+              }
+            : null,
+          latestMessage: null,
+          unreadCount: 0,
+          isTemporary: populatedConv.isTemporary,
+          expiresAt: populatedConv.expiresAt,
+          createdAt: populatedConv.createdAt,
+          updatedAt: populatedConv.updatedAt
+        };
+
+        // Format for receiver (request.receiver)
+        const receiverOtherParticipant = populatedConv.participants.find(
+          (p) => p._id.toString() === request.sender.toString()
+        );
+        const receiverConvData = {
+          _id: populatedConv._id.toString(),
+          participants: populatedConv.participants.map((p) => ({
+            id: p._id.toString(),
+            username: p.username
+          })),
+          otherParticipant: receiverOtherParticipant
+            ? {
+                id: receiverOtherParticipant._id.toString(),
+                username: receiverOtherParticipant.username,
+                isOnline: receiverOtherParticipant.isOnline,
+                lastSeen: receiverOtherParticipant.lastSeen
+              }
+            : null,
+          latestMessage: null,
+          unreadCount: 0,
+          isTemporary: populatedConv.isTemporary,
+          expiresAt: populatedConv.expiresAt,
+          createdAt: populatedConv.createdAt,
+          updatedAt: populatedConv.updatedAt
+        };
+
+        io.to(request.sender.toString()).emit('conversation_created', senderConvData);
+        io.to(request.receiver.toString()).emit('conversation_created', receiverConvData);
+      }
+    }
+
     res.status(200).json({
       success: true,
       message: 'Chat request accepted',
@@ -239,6 +324,12 @@ export const rejectRequest = async (req, res, next) => {
 
     request.status = 'rejected';
     await request.save();
+
+    // Emit Socket.IO event to sender
+    const io = req.app.get('io');
+    if (io) {
+      io.to(request.sender.toString()).emit('request_rejected', { requestId: request._id.toString() });
+    }
 
     res.status(200).json({
       success: true,

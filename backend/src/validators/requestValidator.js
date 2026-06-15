@@ -9,7 +9,7 @@ export const sendRequestValidator = [
     .optional()
     .isBoolean().withMessage('isTemporary must be a boolean'),
   body('expiryDuration')
-    .optional()
+    .optional({ checkFalsy: true })
     .isIn(['1h', '24h', '7d', '1 hour', '24 hours', '7 days']).withMessage('Expiry duration must be 1h, 24h, or 7d'),
   validate
 ];

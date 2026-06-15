@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
 
-export const initCleanupJob = () => {
+export const initCleanupJob = (io) => {
   // Run every hour: '0 * * * *'
   // For testing/validation, we can also support setting it up to run more frequently in development if needed,
   // but hourly is the production requirement.
@@ -15,10 +15,23 @@ export const initCleanupJob = () => {
       const expiredConversations = await Conversation.find({
         isTemporary: true,
         expiresAt: { $lt: now }
-      }).select('_id');
+      }).select('_id participants');
 
       if (expiredConversations.length > 0) {
         const expiredIds = expiredConversations.map((conv) => conv._id);
+
+        // Notify participants in real-time before purging from database
+        if (io) {
+          expiredConversations.forEach((conv) => {
+            if (conv.participants) {
+              conv.participants.forEach((pId) => {
+                io.to(pId.toString()).emit('conversation_deleted', {
+                  conversationId: conv._id
+                });
+              });
+            }
+          });
+        }
 
         // 2. Delete messages in expired conversations
         const messageDeleteResult = await Message.deleteMany({

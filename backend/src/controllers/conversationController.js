@@ -1,5 +1,6 @@
 import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
+import ChatRequest from '../models/ChatRequest.js';
 
 /**
  * @desc    Get conversations for the current user
@@ -136,6 +137,150 @@ export const getMessages = async (req, res, next) => {
           pages: Math.ceil(total / limitNum)
         }
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Update conversation expiry / disappearing settings
+ * @route   PUT /api/conversations/:id/expiry
+ * @access  Private
+ */
+export const updateConversationExpiry = async (req, res, next) => {
+  try {
+    const conversationId = req.params.id;
+    const { isTemporary, expiryDuration } = req.body;
+    const userId = req.user._id;
+
+    // 1. Find conversation
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: 'Conversation not found'
+      });
+    }
+
+    // 2. Authorize participant
+    const isParticipant = conversation.participants.some(
+      (pId) => pId.toString() === userId.toString()
+    );
+    if (!isParticipant) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to configure settings for this conversation'
+      });
+    }
+
+    // 3. Configure expiry settings
+    if (isTemporary) {
+      const now = new Date();
+      let expiresAt;
+
+      if (expiryDuration === '1h') {
+        expiresAt = new Date(now.getTime() + 60 * 60 * 1000);
+      } else if (expiryDuration === '24h') {
+        expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      } else if (expiryDuration === '7d') {
+        expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid expiry duration. Use 1h, 24h, or 7d.'
+        });
+      }
+
+      conversation.isTemporary = true;
+      conversation.expiresAt = expiresAt;
+    } else {
+      conversation.isTemporary = false;
+      conversation.expiresAt = null;
+    }
+
+    await conversation.save();
+
+    // 4. Broadcast changes in real time via Socket.IO
+    const io = req.app.get('io');
+    if (io) {
+      conversation.participants.forEach((pId) => {
+        io.to(pId.toString()).emit('conversation_expiry_updated', {
+          conversationId: conversation._id,
+          isTemporary: conversation.isTemporary,
+          expiresAt: conversation.expiresAt
+        });
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Conversation expiry settings updated successfully',
+      data: {
+        conversation
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Delete conversation and associated messages
+ * @route   DELETE /api/conversations/:id
+ * @access  Private
+ */
+export const deleteConversation = async (req, res, next) => {
+  try {
+    const conversationId = req.params.id;
+    const userId = req.user._id;
+
+    // 1. Find conversation
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({
+        success: false,
+        message: 'Conversation not found'
+      });
+    }
+
+    // 2. Authorize participant
+    const isParticipant = conversation.participants.some(
+      (pId) => pId.toString() === userId.toString()
+    );
+    if (!isParticipant) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to delete this conversation'
+      });
+    }
+
+    // 3. Delete requests, messages and conversation
+    const partnerId = conversation.participants.find(
+      (pId) => pId.toString() !== userId.toString()
+    );
+    await ChatRequest.deleteMany({
+      $or: [
+        { sender: userId, receiver: partnerId },
+        { sender: partnerId, receiver: userId }
+      ]
+    });
+    await Message.deleteMany({ conversationId });
+    await Conversation.deleteOne({ _id: conversationId });
+
+    // 4. Broadcast deletion in real time via Socket.IO
+    const io = req.app.get('io');
+    if (io) {
+      conversation.participants.forEach((pId) => {
+        io.to(pId.toString()).emit('conversation_deleted', {
+          conversationId
+        });
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Conversation and all messages deleted successfully'
     });
   } catch (error) {
     next(error);

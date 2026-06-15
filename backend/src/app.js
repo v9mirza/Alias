@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import rateLimit from 'express-rate-limit';
 import mongoSanitize from 'express-mongo-sanitize';
 import dotenv from 'dotenv';
 import apiRoutes from './routes/index.js';
@@ -19,7 +18,7 @@ app.use(helmet());
 // 2. CORS configuration
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN === '*' ? '*' : process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN === '*' ? true : process.env.CORS_ORIGIN || 'http://localhost:3000',
     credentials: true
   })
 );
@@ -32,22 +31,7 @@ app.use(cookieParser());
 // 4. Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
-// 5. Global API Rate Limiting
-const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS, 10) || 15 * 60 * 1000, // default 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX, 10) || 100, // default 100 requests per IP
-  standardHeaders: true,
-  legacyHeaders: false,
-  handler: (req, res) => {
-    res.status(429).json({
-      success: false,
-      message: 'Too many requests from this IP, please try again after 15 minutes.'
-    });
-  }
-});
 
-// Apply rate limiter to all API routes
-app.use('/api', limiter);
 
 // 6. Mount API Routes
 app.use('/api', apiRoutes);

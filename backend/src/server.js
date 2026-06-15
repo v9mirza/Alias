@@ -34,8 +34,11 @@ const io = new Server(server, {
 // Initialize Socket events
 socketHandler(io);
 
+// Expose io instance to routes/controllers
+app.set('io', io);
+
 // Initialize Cron Cleanup Job
-initCleanupJob();
+initCleanupJob(io);
 
 const PORT = process.env.PORT || 5000;
 

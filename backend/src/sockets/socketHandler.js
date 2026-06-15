@@ -52,7 +52,7 @@ export const socketHandler = (io) => {
         await User.findByIdAndUpdate(user._id, { isOnline: true });
         // Broadcast online status to all other users
         socket.broadcast.emit('user_online', {
-          userId: user._id,
+          userId: user._id.toString(),
           username: user.username
         });
       } catch (err) {
@@ -98,10 +98,10 @@ export const socketHandler = (io) => {
         await conversation.save();
 
         const responseData = {
-          _id: message._id,
-          conversationId: message.conversationId,
+          _id: message._id.toString(),
+          conversationId: message.conversationId.toString(),
           sender: {
-            id: user._id,
+            id: user._id.toString(),
             username: user.username
           },
           content: message.content,
@@ -139,6 +139,7 @@ export const socketHandler = (io) => {
     socket.on('typing_start', async (payload) => {
       try {
         const { conversationId } = payload;
+        console.log(`Server received typing_start from ${user.username} in conversation ${conversationId}`);
         if (!conversationId) return;
 
         const conversation = await Conversation.findById(conversationId);
@@ -147,9 +148,10 @@ export const socketHandler = (io) => {
             (pId) => pId.toString() !== userIdStr
           );
           if (recipientId) {
+            console.log(`Server broadcasting typing_start from ${user.username} to recipient room ${recipientId}`);
             io.to(recipientId.toString()).emit('typing_start', {
-              conversationId,
-              senderId: user._id
+              conversationId: conversationId.toString(),
+              senderId: user._id.toString()
             });
           }
         }
@@ -162,6 +164,7 @@ export const socketHandler = (io) => {
     socket.on('typing_stop', async (payload) => {
       try {
         const { conversationId } = payload;
+        console.log(`Server received typing_stop from ${user.username} in conversation ${conversationId}`);
         if (!conversationId) return;
 
         const conversation = await Conversation.findById(conversationId);
@@ -170,9 +173,10 @@ export const socketHandler = (io) => {
             (pId) => pId.toString() !== userIdStr
           );
           if (recipientId) {
+            console.log(`Server broadcasting typing_stop from ${user.username} to recipient room ${recipientId}`);
             io.to(recipientId.toString()).emit('typing_stop', {
-              conversationId,
-              senderId: user._id
+              conversationId: conversationId.toString(),
+              senderId: user._id.toString()
             });
           }
         }
@@ -208,8 +212,8 @@ export const socketHandler = (io) => {
           );
           if (recipientId) {
             io.to(recipientId.toString()).emit('message_read_receipt', {
-              conversationId,
-              readerId: user._id
+              conversationId: conversationId.toString(),
+              readerId: user._id.toString()
             });
           }
         }
@@ -239,10 +243,24 @@ export const socketHandler = (io) => {
           
           // Broadcast offline status to all other users
           socket.broadcast.emit('user_offline', {
-            userId: user._id,
+            userId: user._id.toString(),
             username: user.username,
             lastSeen: lastSeenDate
           });
+
+          // Clean up typing status in all active conversations
+          const userConversations = await Conversation.find({ participants: user._id });
+          for (const conv of userConversations) {
+            const recipientId = conv.participants.find(
+              (pId) => pId.toString() !== userIdStr
+            );
+            if (recipientId) {
+              io.to(recipientId.toString()).emit('typing_stop', {
+                conversationId: conv._id.toString(),
+                senderId: userIdStr
+              });
+            }
+          }
         } catch (err) {
           console.error(`Error updating offline status for ${user.username}:`, err);
         }
