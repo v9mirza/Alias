@@ -339,6 +339,7 @@ export const Chats: React.FC = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.16 }}
               className="flex-1 flex flex-col min-h-0"
             >
               {/* Active Chat Header Banner */}
@@ -394,7 +395,7 @@ export const Chats: React.FC = () => {
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
+                        transition={{ duration: 0.16 }}
                         className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-2xl p-4 z-50 flex flex-col gap-4 font-mono text-xs text-primaryText hacker-panel"
                       >
                         <div>
@@ -519,7 +520,7 @@ export const Chats: React.FC = () => {
  
               {/* Input Footer Form */}
               <footer className="p-3 md:p-4 border-t border-border bg-surface/30">
-                <form onSubmit={handleSend} className="flex gap-2">
+                <form onSubmit={handleSend} className="flex items-center gap-2">
                   <input
                     type="text"
                     value={inputMsg}
@@ -531,7 +532,7 @@ export const Chats: React.FC = () => {
                   <button
                     type="submit"
                     disabled={!inputMsg.trim() || sending}
-                    className="min-h-11 min-w-11 px-3 rounded-xl bg-accent text-white hover:bg-[#7c4df2] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                    className="min-h-11 min-w-11 flex items-center justify-center px-3 rounded-xl bg-accent text-[#03100d] hover:bg-[#1cd8a6] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                   >
                     <Send className="w-4.5 h-4.5" />
                   </button>

@@ -51,7 +51,7 @@ export const Requests: React.FC = () => {
     <div className="flex-1 flex flex-col px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
       <div className="flex items-center gap-3 mb-4">
         <Inbox className="w-5 h-5 text-accent" />
-        <h1 className="text-sm md:text-lg font-bold tracking-tight text-primaryText uppercase font-mono">CHAT REQUESTS</h1>
+        <h1 className="text-sm md:text-lg font-bold tracking-wide text-primaryText uppercase font-mono">CHAT REQUESTS</h1>
       </div>
 
       <div className="flex gap-3 border-b border-border pb-px mb-4">
@@ -94,6 +94,7 @@ export const Requests: React.FC = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            transition={{ duration: 0.16 }}
             className="flex flex-col gap-3 max-w-3xl"
           >
             <AnimatePresence mode="popLayout">
@@ -108,7 +109,7 @@ export const Requests: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="p-4 rounded-2xl bg-card border border-border flex items-center justify-between gap-3"
+                    className="p-4 rounded-2xl panel-primary flex items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       <div className="relative">
@@ -176,7 +177,7 @@ export const Requests: React.FC = () => {
             </AnimatePresence>
           </motion.div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 bg-card/20 max-w-3xl">
+          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 panel-primary max-w-3xl">
             <Inbox className="w-8 h-8 text-zinc-600 mb-3" />
             <h3 className="font-mono text-xs font-bold uppercase text-secondaryText tracking-widest">
               REQUEST QUEUE EMPTY

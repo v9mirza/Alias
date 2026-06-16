@@ -132,6 +132,7 @@ export const MainLayout: React.FC = () => {
               >
                 <item.icon className="w-4.5 h-4.5" />
                 <span>{item.command.replace('/', '')}</span>
+                {location.pathname.startsWith(item.path) ? <span className="w-1 h-1 rounded-full bg-accent" /> : <span className="w-1 h-1" />}
               </NavLink>
             ))}
           </div>

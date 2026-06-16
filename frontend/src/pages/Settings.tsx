@@ -6,23 +6,26 @@ import Button from '../components/ui/Button.js';
 
 export const Settings: React.FC = () => {
   const { logout, deleteAccount, isLoading, error, clearError } = useAuthStore();
-  const [accent, setAccent] = useState<'violet' | 'indigo'>(
-    (localStorage.getItem('alias_accent') as 'violet' | 'indigo') || 'violet'
+  const [accent, setAccent] = useState<'violet' | 'indigo' | 'red'>(
+    (localStorage.getItem('alias_accent') as 'violet' | 'indigo' | 'red') || 'violet'
   );
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const updateAccentCss = (color: 'violet' | 'indigo') => {
+  const updateAccentCss = (color: 'violet' | 'indigo' | 'red') => {
     const root = document.documentElement;
     if (color === 'violet') {
       root.style.setProperty('--accent', '#8B5CF6');
       root.style.setProperty('--accent-hover', '#7C4DF2');
-    } else {
+    } else if (color === 'indigo') {
       root.style.setProperty('--accent', '#6366F1');
       root.style.setProperty('--accent-hover', '#4F46E5');
+    } else {
+      root.style.setProperty('--accent', '#E11D48');
+      root.style.setProperty('--accent-hover', '#BE123C');
     }
   };
 
-  const applyAccent = (color: 'violet' | 'indigo') => {
+  const applyAccent = (color: 'violet' | 'indigo' | 'red') => {
     setAccent(color);
     localStorage.setItem('alias_accent', color);
     updateAccentCss(color);
@@ -69,7 +72,7 @@ export const Settings: React.FC = () => {
                 onClick={() => applyAccent('violet')}
                 className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
                   accent === 'violet'
-                    ? 'bg-accent text-white shadow-sm'
+                    ? 'bg-accent text-[#03100d]'
                     : 'text-secondaryText hover:text-primaryText'
                 }`}
               >
@@ -79,11 +82,21 @@ export const Settings: React.FC = () => {
                 onClick={() => applyAccent('indigo')}
                 className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
                   accent === 'indigo'
-                    ? 'bg-[#6366F1] text-white shadow-sm'
+                    ? 'bg-[#6366F1] text-white'
                     : 'text-secondaryText hover:text-primaryText'
                 }`}
               >
                 INDIGO
+              </button>
+              <button
+                onClick={() => applyAccent('red')}
+                className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
+                  accent === 'red'
+                    ? 'bg-[#E11D48] text-white'
+                    : 'text-secondaryText hover:text-primaryText'
+                }`}
+              >
+                RED
               </button>
             </div>
           </div>
@@ -149,7 +162,7 @@ export const Settings: React.FC = () => {
           )}
         </div>
 
-        <div className="pt-2 flex">
+        <div className="pt-2 border-t border-border/60 flex">
           <Button
             variant="danger"
             onClick={logout}

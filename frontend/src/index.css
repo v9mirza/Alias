@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --accent: #31e8b8;
-  --accent-hover: #1cd8a6;
+  --accent: #8B5CF6;
+  --accent-hover: #7C4DF2;
   --bg: #04070a;
   --surface: #0a1117;
   --card: #0f1820;
@@ -13,6 +13,8 @@
   --text-secondary: #80b4a7;
   --ok: #22c55e;
   --danger: #ef4444;
+  --motion-fast: 120ms;
+  --motion-base: 180ms;
 }
 
 body {
@@ -91,5 +93,13 @@ body {
 
   .hacker-text {
     color: color-mix(in srgb, var(--accent) 72%, #dff8f1 28%);
+  }
+
+  .panel-primary {
+    @apply bg-card/20 border border-border rounded-2xl;
+  }
+
+  .panel-secondary {
+    @apply bg-card/10 border border-border/70 rounded-xl;
   }
 }

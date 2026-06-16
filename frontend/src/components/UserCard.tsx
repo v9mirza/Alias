@@ -48,15 +48,16 @@ export const UserCard: React.FC<UserCardProps> = ({
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      className="p-4 rounded-2xl bg-card border border-border flex flex-col gap-4 transition-colors hover:bg-card/80 relative overflow-hidden"
+      transition={{ duration: 0.16 }}
+      className="p-4 rounded-2xl panel-primary flex flex-col gap-4 transition-colors hover:bg-card/30 relative overflow-hidden"
     >
       <div className="flex items-start gap-4">
         <Avatar username={user.username} size="md" isOnline={user.isOnline} />
         <div className="flex-1 min-w-0">
-          <h3 className="font-mono text-sm font-bold text-primaryText truncate">
+          <h3 className="font-mono text-sm font-bold text-primaryText truncate tracking-wide">
             &gt; {user.username}
           </h3>
-          <p className="text-xs text-secondaryText mt-1 line-clamp-2">
+          <p className="text-xs text-secondaryText mt-1.5 line-clamp-2 leading-relaxed">
             {user.bio || 'No bio provided.'}
           </p>
         </div>

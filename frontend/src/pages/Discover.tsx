@@ -49,9 +49,9 @@ export const Discover: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <Compass className="w-5 h-5 text-accent" />
-          <h1 className="text-sm md:text-lg font-bold tracking-tight text-primaryText uppercase font-mono">DISCOVER</h1>
+          <h1 className="text-sm md:text-lg font-bold tracking-wide text-primaryText uppercase font-mono">DISCOVER</h1>
         </div>
-        <span className="text-[10px] font-mono uppercase tracking-wider text-secondaryText">Search by alias</span>
+        <span className="text-[10px] font-mono uppercase tracking-wide text-secondaryText">Search by alias</span>
       </div>
 
       <div className="mb-5">
@@ -71,6 +71,7 @@ export const Discover: React.FC = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+            transition={{ duration: 0.16 }}
             className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4"
           >
             {searchResults.map((user) => (
@@ -84,7 +85,7 @@ export const Discover: React.FC = () => {
             ))}
           </motion.div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 bg-card/20">
+          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 panel-primary">
             <Users className="w-8 h-8 text-zinc-600 mb-3" />
             <h3 className="font-mono text-xs font-bold uppercase text-secondaryText tracking-widest">
               {query.trim() ? 'NO MATCH IN DIRECTORY' : 'QUERY USER DIRECTORY'}

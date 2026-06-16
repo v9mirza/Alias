@@ -62,12 +62,12 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           <span className="font-mono text-sm font-bold text-primaryText truncate">
             {otherParticipant.username}
           </span>
-          <span className="text-[10px] font-mono text-zinc-500">
+          <span className="text-[10px] font-mono text-zinc-500 tabular-nums">
             {formatTime(latestMessage?.createdAt || conversation.updatedAt)}
           </span>
         </div>
 
-        <p className="text-xs text-secondaryText truncate mt-0.5 max-w-[180px]">
+        <p className="text-xs text-secondaryText/90 truncate mt-1 max-w-[190px]">
           {latestMessage ? latestMessage.content : 'No messages yet.'}
         </p>
 
@@ -81,7 +81,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
       </div>
 
       {unreadCount > 0 && (
-        <div className="h-5 min-w-[20px] px-1 rounded-full bg-accent flex items-center justify-center text-[10px] font-mono font-bold text-white">
+        <div className="h-5 min-w-[20px] px-1.5 rounded-full bg-accent/85 border border-accent flex items-center justify-center text-[10px] font-mono font-bold text-[#03100d]">
           {unreadCount}
         </div>
       )}
