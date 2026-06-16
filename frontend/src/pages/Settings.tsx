@@ -5,10 +5,11 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import Button from '../components/ui/Button.js';
 
 export const Settings: React.FC = () => {
-  const { logout } = useAuthStore();
+  const { logout, deleteAccount, isLoading, error, clearError } = useAuthStore();
   const [accent, setAccent] = useState<'violet' | 'indigo'>(
     (localStorage.getItem('alias_accent') as 'violet' | 'indigo') || 'violet'
   );
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const updateAccentCss = (color: 'violet' | 'indigo') => {
     const root = document.documentElement;
@@ -31,6 +32,15 @@ export const Settings: React.FC = () => {
   useEffect(() => {
     updateAccentCss(accent);
   }, [accent]);
+
+  const handleDeleteAccount = async () => {
+    clearError();
+    try {
+      await deleteAccount();
+    } catch (error) {
+      console.error('Failed to delete account:', error);
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col px-4 md:px-6 py-4 md:py-6 overflow-y-auto max-w-3xl">
@@ -98,7 +108,48 @@ export const Settings: React.FC = () => {
           </p>
         </div>
 
-        <div className="pt-4 flex">
+        <div className="bg-card/20 border border-red-900/40 p-4 md:p-6 rounded-2xl space-y-3">
+          <h2 className="text-sm font-mono font-bold text-red-300 uppercase">Danger Zone</h2>
+          <p className="text-[11px] text-zinc-400 font-mono uppercase tracking-wide">
+            Deleting your account permanently removes your profile, requests, conversations, and messages from the platform.
+          </p>
+
+          {!confirmDelete ? (
+            <Button
+              variant="danger"
+              onClick={() => setConfirmDelete(true)}
+              className="w-full sm:w-auto font-mono text-xs uppercase px-6"
+            >
+              Delete Account Permanently
+            </Button>
+          ) : (
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button
+                variant="danger"
+                onClick={handleDeleteAccount}
+                isLoading={isLoading}
+                className="w-full sm:w-auto font-mono text-xs uppercase px-6"
+              >
+                Confirm Permanent Delete
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => setConfirmDelete(false)}
+                className="w-full sm:w-auto font-mono text-xs uppercase px-6"
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
+
+          {error && (
+            <p className="text-[11px] text-red-400 font-mono uppercase tracking-wide">
+              {error}
+            </p>
+          )}
+        </div>
+
+        <div className="pt-2 flex">
           <Button
             variant="danger"
             onClick={logout}

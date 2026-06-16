@@ -13,6 +13,7 @@ interface AuthState {
   logout: () => void;
   checkAuth: () => Promise<void>;
   updateProfile: (bio: string, interests: string[]) => Promise<void>;
+  deleteAccount: () => Promise<void>;
   clearError: () => void;
 }
 
@@ -149,6 +150,31 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Profile update failed';
+      set({
+        isLoading: false,
+        error: message
+      });
+      throw err;
+    }
+  },
+
+  deleteAccount: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      await api.delete('/users/me');
+      localStorage.removeItem('alias_token');
+      set({
+        token: null,
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null
+      });
+    } catch (err: unknown) {
+      const rawMessage = err instanceof Error ? err.message : 'Failed to delete account';
+      const message = rawMessage.includes('/api/users/me not found')
+        ? 'Delete endpoint unavailable. Restart backend server and try again.'
+        : rawMessage;
       set({
         isLoading: false,
         error: message

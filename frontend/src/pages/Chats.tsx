@@ -470,11 +470,6 @@ export const Chats: React.FC = () => {
                 </div>
               </header>
 
-              <div className="px-4 md:px-6 py-1.5 border-b border-border/60 bg-surface/25 flex items-center justify-between text-[9px] font-mono uppercase tracking-wider text-zinc-500">
-                <span>[session] encrypted • relay active</span>
-                <span>[rtt] ~24ms • [zone] local</span>
-              </div>
- 
               {/* Message Scroller log */}
               <div className="flex-1 overflow-y-auto px-3 md:px-6 py-4 space-y-3.5">
                 {isLoadingMessages ? (

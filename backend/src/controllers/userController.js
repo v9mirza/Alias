@@ -1,4 +1,7 @@
 import User from '../models/User.js';
+import Conversation from '../models/Conversation.js';
+import Message from '../models/Message.js';
+import ChatRequest from '../models/ChatRequest.js';
 
 /**
  * @desc    Get user profile by ID
@@ -133,6 +136,60 @@ export const searchUsers = async (req, res, next) => {
           pages: Math.ceil(total / limitNum)
         }
       }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Permanently delete current user and all related data
+ * @route   DELETE /api/users/me
+ * @access  Private
+ */
+export const deleteAccount = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const io = req.app.get('io');
+
+    const conversations = await Conversation.find({ participants: userId }).select('_id participants');
+    const conversationIds = conversations.map((conv) => conv._id);
+
+    // Notify other participants that affected conversations are gone.
+    if (io) {
+      conversations.forEach((conv) => {
+        conv.participants.forEach((participantId) => {
+          const participantStr = participantId.toString();
+          if (participantStr !== userId.toString()) {
+            io.to(participantStr).emit('conversation_deleted', {
+              conversationId: conv._id.toString()
+            });
+          }
+        });
+      });
+    }
+
+    if (conversationIds.length > 0) {
+      await Message.deleteMany({ conversationId: { $in: conversationIds } });
+      await Conversation.deleteMany({ _id: { $in: conversationIds } });
+    }
+
+    // Defensive cleanup in case any messages exist outside mapped conversations.
+    await Message.deleteMany({ sender: userId });
+    await ChatRequest.deleteMany({
+      $or: [{ sender: userId }, { receiver: userId }]
+    });
+    await User.deleteOne({ _id: userId });
+
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Account and all associated data deleted permanently'
     });
   } catch (error) {
     next(error);
