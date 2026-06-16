@@ -69,11 +69,48 @@ export const searchUsers = async (req, res, next) => {
     const pageNum = parseInt(page, 10);
     const limitNum = parseInt(limit, 10);
     const skipNum = (pageNum - 1) * limitNum;
+    const trimmedQuery = q.trim();
+
+    const baseFilter = { _id: { $ne: req.user._id } };
+
+    if (!trimmedQuery) {
+      const users = await User.find(baseFilter).select('username bio interests isOnline lastSeen');
+
+      const dateSeed = new Date().toISOString().slice(0, 10);
+      const seedSource = `${req.user._id.toString()}-${dateSeed}`;
+      let seed = 0;
+      for (let i = 0; i < seedSource.length; i += 1) {
+        seed = (seed * 31 + seedSource.charCodeAt(i)) >>> 0;
+      }
+
+      const nextRandom = () => {
+        seed = (seed * 1664525 + 1013904223) >>> 0;
+        return seed / 2 ** 32;
+      };
+
+      const shuffled = [...users].sort(() => nextRandom() - 0.5);
+      const paginatedUsers = shuffled.slice(skipNum, skipNum + limitNum);
+      const total = shuffled.length;
+
+      return res.status(200).json({
+        success: true,
+        message: 'Users retrieved successfully',
+        data: {
+          users: paginatedUsers,
+          pagination: {
+            total,
+            page: pageNum,
+            limit: limitNum,
+            pages: Math.ceil(total / limitNum)
+          }
+        }
+      });
+    }
 
     // Search query: match username (case insensitive), and exclude self
     const filter = {
-      username: { $regex: q.trim(), $options: 'i' },
-      _id: { $ne: req.user._id }
+      ...baseFilter,
+      username: { $regex: trimmedQuery, $options: 'i' }
     };
 
     const users = await User.find(filter)

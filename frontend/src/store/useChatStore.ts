@@ -266,13 +266,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   searchUsers: async (query, page = 1) => {
-    if (!query.trim()) {
-      set({ searchResults: [], searchPagination: null });
-      return;
-    }
     set({ isLoadingSearch: true });
     try {
-      const response = await api.get(`/users/search?q=${query}&page=${page}&limit=10`);
+      const response = await api.get(`/users/search?q=${encodeURIComponent(query)}&page=${page}&limit=10`);
       const { users, pagination } = response.data.data;
       set({
         searchResults: users,

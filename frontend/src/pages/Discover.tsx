@@ -58,7 +58,7 @@ export const Discover: React.FC = () => {
         <SearchBar
           value={query}
           onSearchChange={setQuery}
-          placeholder="Find users..."
+          placeholder="Search aliases (or browse all)..."
         />
       </div>
 
