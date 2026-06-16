@@ -5,6 +5,8 @@ import { useChatStore } from './useChatStore.js';
 interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
+  isReconnecting: boolean;
+  connectionError: string | null;
   connectSocket: (token: string) => void;
   disconnectSocket: () => void;
 }
@@ -12,6 +14,8 @@ interface SocketState {
 export const useSocketStore = create<SocketState>((set, get) => ({
   socket: null,
   isConnected: false,
+  isReconnecting: false,
+  connectionError: null,
 
   connectSocket: (token) => {
     if (get().socket?.connected) return;
@@ -27,7 +31,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
     socket.on('connect', () => {
       console.log('Socket.IO connected. ID:', socket.id);
-      set({ isConnected: true });
+      set({ isConnected: true, isReconnecting: false, connectionError: null });
 
       // Sync state with database on connection/reconnection
       const chatStore = useChatStore.getState();
@@ -41,12 +45,12 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
     socket.on('disconnect', (reason) => {
       console.log('Socket.IO disconnected. Reason:', reason);
-      set({ isConnected: false });
+      set({ isConnected: false, isReconnecting: reason !== 'io client disconnect' });
     });
 
     socket.on('connect_error', (error) => {
       console.error('Socket.IO connection error:', error.message);
-      set({ isConnected: false });
+      set({ isConnected: false, isReconnecting: true, connectionError: error.message });
     });
 
     // Handle real-time messaging events
@@ -91,6 +95,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     socket.on('conversation_deleted', (data) => {
       console.log('Conversation deleted:', data);
       useChatStore.getState().removeConversationLocally(data.conversationId);
+      useChatStore.getState().clearError();
     });
 
     socket.on('request_received', (data) => {
@@ -117,7 +122,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     if (socket) {
       console.log('Disconnecting Socket.IO...');
       socket.disconnect();
-      set({ socket: null, isConnected: false });
+      set({ socket: null, isConnected: false, isReconnecting: false, connectionError: null });
     }
   }
 }));

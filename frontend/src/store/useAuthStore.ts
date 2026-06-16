@@ -45,10 +45,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isAuthenticated: true,
         isLoading: false
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Login failed';
       set({
         isLoading: false,
-        error: err.message || 'Login failed'
+        error: message
       });
       throw err;
     }
@@ -74,10 +75,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isAuthenticated: true,
         isLoading: false
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Registration failed';
       set({
         isLoading: false,
-        error: err.message || 'Registration failed'
+        error: message
       });
       throw err;
     }
@@ -117,7 +119,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         isAuthenticated: true,
         isLoading: false
       });
-    } catch (err: any) {
+    } catch {
       localStorage.removeItem('alias_token');
       set({
         token: null,
@@ -145,10 +147,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         },
         isLoading: false
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Profile update failed';
       set({
         isLoading: false,
-        error: err.message || 'Profile update failed'
+        error: message
       });
       throw err;
     }

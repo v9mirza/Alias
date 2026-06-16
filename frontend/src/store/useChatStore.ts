@@ -1,7 +1,17 @@
 import { create } from 'zustand';
+import { AxiosError } from 'axios';
 import api from '../services/api.js';
 import type { Conversation, Message, ChatRequest, User } from '../types/index.js';
 import { useSocketStore } from './useSocketStore.js';
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === 'object') {
+    const axiosError = error as AxiosError<{ message?: string }>;
+    return axiosError.response?.data?.message || fallback;
+  }
+  return fallback;
+};
 
 interface ChatState {
   conversations: Conversation[];
@@ -49,6 +59,8 @@ interface ChatState {
   deleteConversation: (id: string) => Promise<void>;
   updateConversationExpiryState: (conversationId: string, isTemporary: boolean, expiresAt: string | null) => void;
   removeConversationLocally: (conversationId: string) => void;
+  lastError: string | null;
+  clearError: () => void;
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -67,6 +79,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
   isLoadingConversations: false,
   isLoadingRequests: false,
   isLoadingSearch: false,
+  lastError: null,
+
+  clearError: () => set({ lastError: null }),
 
   setActiveConversationId: (id) => {
     set({ activeConversationId: id, messages: [], messagesPagination: null });
@@ -80,9 +95,9 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set({ isLoadingConversations: true });
     try {
       const response = await api.get('/conversations');
-      set({ conversations: response.data.data.conversations, isLoadingConversations: false });
-    } catch (error) {
-      set({ isLoadingConversations: false });
+      set({ conversations: response.data.data.conversations, isLoadingConversations: false, lastError: null });
+    } catch (error: unknown) {
+      set({ isLoadingConversations: false, lastError: getErrorMessage(error, 'Failed to load conversations') });
     }
   },
 
@@ -97,8 +112,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
         messagesPagination: pagination,
         isLoadingMessages: false
       }));
-    } catch (error) {
-      set({ isLoadingMessages: false });
+    } catch (error: unknown) {
+      const message = getErrorMessage(error, 'Failed to load messages');
+      if (message.toLowerCase().includes('expired')) {
+        get().removeConversationLocally(conversationId);
+      }
+      set({ isLoadingMessages: false, lastError: message });
     }
   },
 
@@ -107,8 +126,26 @@ export const useChatStore = create<ChatState>((set, get) => ({
     if (!socket) throw new Error('Socket not connected');
 
     return new Promise((resolve, reject) => {
-      socket.emit('send_message', { conversationId, content }, (response: any) => {
+      socket.emit(
+        'send_message',
+        { conversationId, content },
+        (response: {
+          success: boolean;
+          message?: string;
+          data?: {
+            _id: string;
+            conversationId: string;
+            sender: { id: string; username: string };
+            content: string;
+            isRead: boolean;
+            createdAt: string;
+          };
+        }) => {
         if (response.success) {
+          if (!response.data) {
+            reject(new Error('Malformed message response'));
+            return;
+          }
           const newMsg: Message = {
             _id: response.data._id,
             conversationId: response.data.conversationId,
@@ -141,9 +178,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
           resolve();
         } else {
-          reject(new Error(response.message || 'Failed to send message'));
+          const message = response.message || 'Failed to send message';
+          set({ lastError: message });
+          reject(new Error(message));
         }
-      });
+      }
+      );
     });
   },
 
@@ -159,7 +199,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     const socket = useSocketStore.getState().socket;
     if (!socket) return;
 
-    socket.emit('message_read', { conversationId }, (res: any) => {
+    socket.emit('message_read', { conversationId }, (res: { success?: boolean }) => {
       if (res?.success) {
         // Clear unread count locally for this conversation
         set((state) => ({
@@ -186,21 +226,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
         },
         isLoadingRequests: false
       });
-    } catch (error) {
-      set({ isLoadingRequests: false });
+    } catch (error: unknown) {
+      set({ isLoadingRequests: false, lastError: getErrorMessage(error, 'Failed to load requests') });
     }
   },
 
   sendChatRequest: async (receiverId, isTemporary = false, expiryDuration = '24h') => {
     try {
-      const payload: any = { receiverId, isTemporary };
+      const payload: { receiverId: string; isTemporary: boolean; expiryDuration?: string } = { receiverId, isTemporary };
       if (isTemporary && expiryDuration) {
         payload.expiryDuration = expiryDuration;
       }
       await api.post('/requests', payload);
       await get().fetchRequests();
-    } catch (error: any) {
-      throw error;
+    } catch (error: unknown) {
+      throw new Error(getErrorMessage(error, 'Failed to send request'), { cause: error });
     }
   },
 
@@ -211,8 +251,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         get().fetchRequests(),
         get().fetchConversations()
       ]);
-    } catch (error: any) {
-      throw error;
+    } catch (error: unknown) {
+      throw new Error(getErrorMessage(error, 'Failed to accept request'), { cause: error });
     }
   },
 
@@ -220,8 +260,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
     try {
       await api.post(`/requests/${requestId}/reject`);
       await get().fetchRequests();
-    } catch (error: any) {
-      throw error;
+    } catch (error: unknown) {
+      throw new Error(getErrorMessage(error, 'Failed to reject request'), { cause: error });
     }
   },
 
@@ -239,8 +279,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         searchPagination: pagination,
         isLoadingSearch: false
       });
-    } catch (error) {
-      set({ isLoadingSearch: false });
+    } catch (error: unknown) {
+      set({ isLoadingSearch: false, lastError: getErrorMessage(error, 'Failed to search users') });
     }
   },
 
@@ -344,8 +384,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
           c._id === id ? { ...c, isTemporary: updatedConv.isTemporary, expiresAt: updatedConv.expiresAt } : c
         )
       }));
-    } catch (error: any) {
-      throw error;
+    } catch (error: unknown) {
+      throw new Error(getErrorMessage(error, 'Failed to update chat expiry'), { cause: error });
     }
   },
 
@@ -358,8 +398,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
         messages: state.activeConversationId === id ? [] : state.messages,
         messagesPagination: state.activeConversationId === id ? null : state.messagesPagination
       }));
-    } catch (error: any) {
-      throw error;
+    } catch (error: unknown) {
+      throw new Error(getErrorMessage(error, 'Failed to delete conversation'), { cause: error });
     }
   },
 

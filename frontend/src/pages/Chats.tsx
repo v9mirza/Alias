@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, Send, Clock, Circle, Settings, Trash2, ShieldAlert } from 'lucide-react';
 import { useChatStore } from '../store/useChatStore.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { useSocketStore } from '../store/useSocketStore.js';
 import ConversationItem from '../components/chat/ConversationItem.js';
 import ChatBubble from '../components/chat/ChatBubble.js';
 import Avatar from '../components/ui/Avatar.js';
@@ -59,13 +60,18 @@ export const Chats: React.FC = () => {
     sendMessage,
     sendTyping,
     updateConversationExpiry,
-    deleteConversation
+    deleteConversation,
+    removeConversationLocally,
+    lastError,
+    clearError
   } = useChatStore();
+  const { isConnected, isReconnecting } = useSocketStore();
 
   const [inputMsg, setInputMsg] = useState('');
   const [sending, setSending] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [nowTs, setNowTs] = useState(0);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -92,11 +98,24 @@ export const Chats: React.FC = () => {
     };
   }, []);
 
-  // Reset dropdown state when changing chats
   useEffect(() => {
-    setShowSettings(false);
-    setConfirmDelete(false);
-  }, [activeConversationId]);
+    const timer = setInterval(() => {
+      setNowTs(Date.now());
+    }, 15000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const expiredConversationIds = conversations
+      .filter(
+        (conv) =>
+          conv.isTemporary && conv.expiresAt && new Date(conv.expiresAt).getTime() <= nowTs
+      )
+      .map((conv) => conv._id);
+
+    if (!expiredConversationIds.length) return;
+    expiredConversationIds.forEach((id) => removeConversationLocally(id));
+  }, [conversations, nowTs, removeConversationLocally]);
 
   // Clean up typing indicator for previous chat when active conversation changes or component unmounts
   const prevActiveConvIdRef = useRef<string | null>(null);
@@ -215,7 +234,7 @@ export const Chats: React.FC = () => {
     if (Math.abs(diff - 24 * 60 * 60 * 1000) < margin) return '24h';
     if (Math.abs(diff - 7 * 24 * 60 * 60 * 1000) < margin) return '7d';
     
-    const remaining = expiresAt - Date.now();
+    const remaining = expiresAt - nowTs;
     if (remaining > 24 * 60 * 60 * 1000) return '7d';
     if (remaining > 60 * 60 * 1000) return '24h';
     return '1h';
@@ -236,6 +255,25 @@ export const Chats: React.FC = () => {
 
   return (
     <div className="flex-1 flex min-h-0 bg-background">
+      {!isConnected && (
+        <div className="absolute top-0 inset-x-0 z-50">
+          <div className="mx-auto mt-2 max-w-xl rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[11px] font-mono text-amber-200 text-center">
+            {isReconnecting ? 'Connection unstable. Reconnecting to live chat...' : 'Live chat disconnected.'}
+          </div>
+        </div>
+      )}
+
+      {lastError && (
+        <div className="absolute top-12 inset-x-0 z-40">
+          <div className="mx-auto mt-2 max-w-xl rounded-md border border-red-500/40 bg-red-500/10 px-3 py-2 text-[11px] font-mono text-red-200 text-center">
+            {lastError}
+            <button onClick={clearError} className="ml-2 underline text-red-100">
+              dismiss
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Left panel: Conversations List */}
       <section className="w-80 border-r border-border flex flex-col bg-surface/30 min-h-0">
         <div className="p-4 border-b border-border">
@@ -254,7 +292,12 @@ export const Chats: React.FC = () => {
                 key={conv._id}
                 conversation={conv}
                 isActive={conv._id === activeConversationId}
-                onClick={() => setActiveConversationId(conv._id)}
+                nowTs={nowTs}
+                onClick={() => {
+                  setShowSettings(false);
+                  setConfirmDelete(false);
+                  setActiveConversationId(conv._id);
+                }}
               />
             ))
           ) : (
@@ -298,7 +341,12 @@ export const Chats: React.FC = () => {
 
                 <div className="flex items-center gap-3 relative" ref={settingsRef}>
                   {activeConv.isTemporary && activeConv.expiresAt && (
-                    <RemainingTimeBadge expiresAt={activeConv.expiresAt} />
+                    <div className="flex flex-col items-end gap-1">
+                      <RemainingTimeBadge expiresAt={activeConv.expiresAt} />
+                      <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-wide">
+                        Auto-cleanup runs every few minutes in dev.
+                      </span>
+                    </div>
                   )}
 
                   <button

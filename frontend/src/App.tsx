@@ -1,18 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useSocketStore } from './store/useSocketStore.js';
 
 // Layout & Pages
 import MainLayout from './layouts/MainLayout.js';
-import Login from './pages/Login.js';
-import Register from './pages/Register.js';
-import Chats from './pages/Chats.js';
-import Discover from './pages/Discover.js';
-import Requests from './pages/Requests.js';
-import Profile from './pages/Profile.js';
-import Settings from './pages/Settings.js';
 import Loader from './components/ui/Loader.js';
+
+const Login = lazy(() => import('./pages/Login.js'));
+const Register = lazy(() => import('./pages/Register.js'));
+const Chats = lazy(() => import('./pages/Chats.js'));
+const Discover = lazy(() => import('./pages/Discover.js'));
+const Requests = lazy(() => import('./pages/Requests.js'));
+const Profile = lazy(() => import('./pages/Profile.js'));
+const Settings = lazy(() => import('./pages/Settings.js'));
 
 // Protected Route Guard
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -64,6 +65,7 @@ export const App: React.FC = () => {
 
   return (
     <BrowserRouter>
+      <Suspense fallback={<Loader fullscreen label="LOADING VIEW..." />}>
       <Routes>
         {/* Public Routes */}
         <Route
@@ -105,6 +107,7 @@ export const App: React.FC = () => {
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/chats" replace />} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 };

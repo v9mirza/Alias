@@ -3,10 +3,9 @@ import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
 
 export const initCleanupJob = (io) => {
-  // Run every hour: '0 * * * *'
-  // For testing/validation, we can also support setting it up to run more frequently in development if needed,
-  // but hourly is the production requirement.
-  cron.schedule('0 * * * *', async () => {
+  const schedule = process.env.CLEANUP_CRON || (process.env.NODE_ENV === 'production' ? '0 * * * *' : '*/5 * * * *');
+
+  cron.schedule(schedule, async () => {
     console.log('Running temporary chat cleanup job...');
     try {
       const now = new Date();
@@ -54,7 +53,7 @@ export const initCleanupJob = (io) => {
     }
   });
 
-  console.log('Cleanup job scheduled successfully (Hourly).');
+  console.log(`Cleanup job scheduled successfully (${schedule}).`);
 };
 
 export default initCleanupJob;

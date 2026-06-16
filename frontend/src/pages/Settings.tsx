@@ -10,9 +10,7 @@ export const Settings: React.FC = () => {
     (localStorage.getItem('alias_accent') as 'violet' | 'indigo') || 'violet'
   );
 
-  const applyAccent = (color: 'violet' | 'indigo') => {
-    setAccent(color);
-    localStorage.setItem('alias_accent', color);
+  const updateAccentCss = (color: 'violet' | 'indigo') => {
     const root = document.documentElement;
     if (color === 'violet') {
       root.style.setProperty('--accent', '#8B5CF6');
@@ -23,10 +21,16 @@ export const Settings: React.FC = () => {
     }
   };
 
+  const applyAccent = (color: 'violet' | 'indigo') => {
+    setAccent(color);
+    localStorage.setItem('alias_accent', color);
+    updateAccentCss(color);
+  };
+
   // Run on mount to ensure localstorage configuration is applied
   useEffect(() => {
-    applyAccent(accent);
-  }, []);
+    updateAccentCss(accent);
+  }, [accent]);
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto max-w-2xl">

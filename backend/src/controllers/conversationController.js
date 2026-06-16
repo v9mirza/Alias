@@ -1,6 +1,7 @@
 import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
 import ChatRequest from '../models/ChatRequest.js';
+import { isConversationExpired, purgeExpiredConversation } from '../utils/conversationExpiry.js';
 
 /**
  * @desc    Get conversations for the current user
@@ -10,6 +11,7 @@ import ChatRequest from '../models/ChatRequest.js';
 export const getConversations = async (req, res, next) => {
   try {
     const userId = req.user._id;
+    const io = req.app.get('io');
 
     // Find all conversations where current user is a participant
     const conversations = await Conversation.find({
@@ -18,12 +20,16 @@ export const getConversations = async (req, res, next) => {
       .populate('participants', 'username isOnline lastSeen bio interests')
       .sort({ updatedAt: -1 });
 
-    const formattedConversations = await Promise.all(
-      conversations.map(async (conv) => {
+    const formattedConversations = [];
+
+    for (const conv of conversations) {
+      if (isConversationExpired(conv)) {
+        await purgeExpiredConversation(conv, io);
+        continue;
+      }
+
         // Find the other participant
-        const otherParticipant = conv.participants.find(
-          (p) => p._id.toString() !== userId.toString()
-        );
+      const otherParticipant = conv.participants.find((p) => p._id.toString() !== userId.toString());
 
         // Fetch latest message
         const latestMessage = await Message.findOne({ conversationId: conv._id })
@@ -37,29 +43,28 @@ export const getConversations = async (req, res, next) => {
           isRead: false
         });
 
-        return {
-          _id: conv._id,
-          participants: conv.participants.map(p => ({
-            id: p._id,
-            username: p.username
-          })),
-          otherParticipant: otherParticipant
-            ? {
-                id: otherParticipant._id,
-                username: otherParticipant.username,
-                isOnline: otherParticipant.isOnline,
-                lastSeen: otherParticipant.lastSeen
-              }
-            : null,
-          latestMessage,
-          unreadCount,
-          isTemporary: conv.isTemporary,
-          expiresAt: conv.expiresAt,
-          createdAt: conv.createdAt,
-          updatedAt: conv.updatedAt
-        };
-      })
-    );
+      formattedConversations.push({
+        _id: conv._id,
+        participants: conv.participants.map((p) => ({
+          id: p._id,
+          username: p.username
+        })),
+        otherParticipant: otherParticipant
+          ? {
+              id: otherParticipant._id,
+              username: otherParticipant.username,
+              isOnline: otherParticipant.isOnline,
+              lastSeen: otherParticipant.lastSeen
+            }
+          : null,
+        latestMessage,
+        unreadCount,
+        isTemporary: conv.isTemporary,
+        expiresAt: conv.expiresAt,
+        createdAt: conv.createdAt,
+        updatedAt: conv.updatedAt
+      });
+    }
 
     // Sort by latest message date (or updatedAt as fallback)
     formattedConversations.sort((a, b) => {
@@ -100,6 +105,14 @@ export const getMessages = async (req, res, next) => {
       return res.status(404).json({
         success: false,
         message: 'Conversation not found'
+      });
+    }
+
+    if (isConversationExpired(conversation)) {
+      await purgeExpiredConversation(conversation, req.app.get('io'));
+      return res.status(410).json({
+        success: false,
+        message: 'This temporary conversation has expired'
       });
     }
 

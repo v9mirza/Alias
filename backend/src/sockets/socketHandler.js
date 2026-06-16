@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
+import { isConversationExpired, purgeExpiredConversation } from '../utils/conversationExpiry.js';
 
 export const socketHandler = (io) => {
   // Authentication middleware for Socket.IO
@@ -74,6 +75,12 @@ export const socketHandler = (io) => {
         const conversation = await Conversation.findById(conversationId);
         if (!conversation) {
           if (callback) callback({ success: false, message: 'Conversation not found' });
+          return;
+        }
+
+        if (isConversationExpired(conversation)) {
+          await purgeExpiredConversation(conversation, io);
+          if (callback) callback({ success: false, message: 'Conversation has expired' });
           return;
         }
 

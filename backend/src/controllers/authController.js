@@ -8,6 +8,13 @@ const generateToken = (id) => {
   });
 };
 
+const buildCookieOptions = () => ({
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  maxAge: 7 * 24 * 60 * 60 * 1000
+});
+
 /**
  * @desc    Register a new user
  * @route   POST /api/auth/register
@@ -33,11 +40,7 @@ export const register = async (req, res, next) => {
     const token = generateToken(user._id);
 
     // Set cookie option (optional, but good practice)
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-    });
+    res.cookie('token', token, buildCookieOptions());
 
     res.status(201).json({
       success: true,
@@ -82,11 +85,7 @@ export const login = async (req, res, next) => {
 
     const token = generateToken(user._id);
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+    res.cookie('token', token, buildCookieOptions());
 
     res.status(200).json({
       success: true,

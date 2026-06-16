@@ -8,12 +8,14 @@ interface ConversationItemProps {
   conversation: Conversation;
   isActive: boolean;
   onClick: () => void;
+  nowTs: number;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
   isActive,
-  onClick
+  onClick,
+  nowTs
 }) => {
   const { otherParticipant, latestMessage, unreadCount, isTemporary, expiresAt } = conversation;
   
@@ -29,7 +31,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   // Calculate remaining time for temporary chats
   const getRemainingTime = (expiryString: string | null) => {
     if (!expiryString) return '';
-    const diff = new Date(expiryString).getTime() - Date.now();
+    const diff = new Date(expiryString).getTime() - nowTs;
     if (diff <= 0) return 'EXPIRED';
     
     const mins = Math.floor(diff / 60000);

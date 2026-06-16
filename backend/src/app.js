@@ -6,11 +6,13 @@ import mongoSanitize from 'express-mongo-sanitize';
 import dotenv from 'dotenv';
 import apiRoutes from './routes/index.js';
 import errorHandler from './middleware/errorHandler.js';
+import { apiLimiter } from './middleware/rateLimit.js';
 
 // Load env variables
 dotenv.config();
 
 const app = express();
+app.set('trust proxy', 1);
 
 // 1. Security HTTP Headers
 app.use(helmet());
@@ -18,7 +20,7 @@ app.use(helmet());
 // 2. CORS configuration
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN === '*' ? true : process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: process.env.CORS_ORIGIN === '*' ? true : process.env.CORS_ORIGIN || 'http://localhost:5173',
     credentials: true
   })
 );
@@ -31,7 +33,8 @@ app.use(cookieParser());
 // 4. Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
 
-
+// 5. Global API rate limiting
+app.use('/api', apiLimiter);
 
 // 6. Mount API Routes
 app.use('/api', apiRoutes);

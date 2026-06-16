@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User as UserIcon, Plus, X, Shield, Check } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -13,14 +13,6 @@ export const Profile: React.FC = () => {
   const [interests, setInterests] = useState<string[]>(user?.interests || []);
   const [newTag, setNewTag] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
-
-  // Sync state with store user (useful if fetched after load)
-  useEffect(() => {
-    if (user) {
-      setBio(user.bio);
-      setInterests(user.interests);
-    }
-  }, [user]);
 
   const handleAddTag = (e: React.FormEvent) => {
     e.preventDefault();

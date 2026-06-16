@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
@@ -24,12 +23,10 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <motion.button
-      whileHover={{ y: disabled || isLoading ? 0 : -1 }}
-      whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
+    <button
       className={`${baseStyles} ${variants[variant]} ${className}`}
       disabled={disabled || isLoading}
-      {...(props as any)}
+      {...props}
     >
       {isLoading ? (
         <span className="flex items-center gap-1">
@@ -42,7 +39,7 @@ export const Button: React.FC<ButtonProps> = ({
       ) : (
         children
       )}
-    </motion.button>
+    </button>
   );
 };
 
