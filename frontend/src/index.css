@@ -3,14 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --accent: #8B5CF6;
-  --accent-hover: #7C4DF2;
-  --bg: #070a0d;
-  --surface: #0f141a;
-  --card: #121a22;
-  --border: #223041;
-  --text-primary: #e7edf6;
-  --text-secondary: #8fa2bb;
+  --accent: #31e8b8;
+  --accent-hover: #1cd8a6;
+  --bg: #04070a;
+  --surface: #0a1117;
+  --card: #0f1820;
+  --border: #1f3740;
+  --text-primary: #dcf6ef;
+  --text-secondary: #80b4a7;
   --ok: #22c55e;
   --danger: #ef4444;
 }
@@ -50,6 +50,10 @@ body {
 
 #root {
   min-height: 100vh;
+  background-image:
+    linear-gradient(rgba(49, 232, 184, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(49, 232, 184, 0.025) 1px, transparent 1px);
+  background-size: 26px 26px;
 }
 
 @layer base {
@@ -66,5 +70,26 @@ body {
   :focus-visible {
     outline: 2px solid color-mix(in srgb, var(--accent) 75%, white 25%);
     outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .hacker-panel {
+    background:
+      linear-gradient(rgba(49, 232, 184, 0.04), rgba(49, 232, 184, 0.01)),
+      var(--card);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, #1f3740 72%);
+    box-shadow: none;
+  }
+
+  .hacker-grid {
+    background-image:
+      linear-gradient(rgba(49, 232, 184, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(49, 232, 184, 0.05) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
+  .hacker-text {
+    color: color-mix(in srgb, var(--accent) 72%, #dff8f1 28%);
   }
 }

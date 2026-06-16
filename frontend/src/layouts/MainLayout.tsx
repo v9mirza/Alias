@@ -27,13 +27,13 @@ export const MainLayout: React.FC = () => {
   const currentSection = navItems.find((item) => location.pathname.startsWith(item.path))?.name || 'ALIAS';
 
   return (
-    <div className="min-h-screen bg-background text-primaryText flex font-sans selection:bg-accent/30 selection:text-white">
+    <div className="min-h-screen bg-background text-primaryText flex font-sans selection:bg-accent/30 selection:text-white hacker-grid">
       {/* Sidebar - Desktop */}
-      <aside className="w-72 border-r border-border bg-surface hidden md:flex md:flex-col md:justify-between">
+      <aside className="w-72 border-r border-border bg-surface/95 hidden md:flex md:flex-col md:justify-between">
         <div className="flex flex-col">
           <div className="px-6 py-6 border-b border-border flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-full bg-accent shadow-sm shadow-accent/50"></div>
-            <span className="font-mono text-sm font-bold tracking-[0.3em] text-primaryText">
+            <div className="w-5 h-5 rounded-full bg-accent"></div>
+            <span className="font-mono text-sm font-bold tracking-[0.3em] text-primaryText hacker-text">
               ALIAS
             </span>
           </div>
@@ -46,7 +46,7 @@ export const MainLayout: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-4 py-3 rounded-xl font-mono text-xs font-bold tracking-wider transition-all ${
                     isActive
-                      ? 'bg-card text-accent border border-accent/30 shadow-sm shadow-accent/20'
+                      ? 'bg-card text-accent border border-accent/40'
                       : 'text-secondaryText hover:text-primaryText hover:bg-card/45 border border-transparent'
                   }`
                 }
@@ -95,7 +95,7 @@ export const MainLayout: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <div className="w-3.5 h-3.5 rounded-full bg-accent"></div>
             <div className="flex flex-col">
-              <span className="font-mono text-[10px] font-bold tracking-[0.25em] text-primaryText">ALIAS</span>
+              <span className="font-mono text-[10px] font-bold tracking-[0.25em] text-primaryText hacker-text">ALIAS</span>
               <span className="text-[10px] text-secondaryText font-mono">{currentSection}</span>
             </div>
           </div>
@@ -122,7 +122,7 @@ export const MainLayout: React.FC = () => {
                 to={item.path}
                 className={({ isActive }) =>
                   `flex flex-col items-center justify-center gap-1 text-[10px] font-mono tracking-wide ${
-                    isActive ? 'text-accent' : 'text-secondaryText'
+                    isActive ? 'text-accent font-bold' : 'text-secondaryText'
                   }`
                 }
               >

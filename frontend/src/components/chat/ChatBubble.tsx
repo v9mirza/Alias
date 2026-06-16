@@ -25,8 +25,8 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isOutgoing }) =
         <div
           className={`px-4 py-2.5 rounded-2xl border text-sm shadow-sm leading-relaxed ${
             isOutgoing
-              ? 'bg-accent border-transparent text-white rounded-br-sm'
-              : 'bg-card border-border text-primaryText rounded-bl-sm'
+              ? 'bg-accent border-transparent text-[#02140f] rounded-br-sm'
+              : 'bg-card border-border text-primaryText rounded-bl-sm hacker-panel'
           }`}
         >
           <p className="whitespace-pre-wrap break-words">{message.content}</p>

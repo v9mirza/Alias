@@ -17,7 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
     'min-h-11 px-4 rounded-xl font-medium text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] touch-manipulation';
   
   const variants = {
-    primary: 'bg-accent hover:bg-accentHover text-white shadow-sm shadow-accent/20 border border-transparent',
+    primary: 'bg-accent hover:bg-accentHover text-[#03100d] border border-transparent',
     secondary: 'bg-card border border-border text-primaryText hover:border-accent/40 hover:bg-surface/60',
     danger: 'bg-red-950/40 border border-red-900/60 text-red-300 hover:bg-red-950/60',
     ghost: 'bg-transparent text-secondaryText hover:text-primaryText hover:bg-surface/50 border border-transparent'

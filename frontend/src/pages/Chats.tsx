@@ -328,7 +328,7 @@ export const Chats: React.FC = () => {
               className="flex-1 flex flex-col min-h-0"
             >
               {/* Active Chat Header Banner */}
-              <header className="sticky top-0 z-20 p-3 md:p-4 border-b border-border bg-card/70 backdrop-blur-sm flex items-center justify-between gap-3">
+              <header className="sticky top-0 z-20 p-3 md:p-4 border-b border-border bg-card/70 backdrop-blur-sm flex items-center justify-between gap-3 hacker-panel">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setActiveConversationId(null)}
@@ -381,11 +381,11 @@ export const Chats: React.FC = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-2xl p-4 z-50 flex flex-col gap-4 font-mono text-xs text-primaryText"
+                        className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-2xl p-4 z-50 flex flex-col gap-4 font-mono text-xs text-primaryText hacker-panel"
                       >
                         <div>
                           <div className="text-[10px] text-secondaryText uppercase tracking-wider mb-2 font-bold">
-                            Disappearing Messages
+                            Message Timer
                           </div>
                           <div className="grid grid-cols-2 gap-1.5">
                             {[
@@ -404,7 +404,7 @@ export const Chats: React.FC = () => {
                                   onClick={() => handleUpdateExpiry(opt.isTemp, opt.duration)}
                                   className={`py-2 px-2.5 rounded-lg border text-center transition-all text-[10px] font-bold tracking-wider ${
                                     isActive
-                                      ? 'bg-accent border-accent text-white shadow-lg shadow-accent/25'
+                                      ? 'bg-accent border-accent text-[#03100d]'
                                       : 'bg-[#1b1b1b] border-border hover:border-zinc-500 text-secondaryText hover:text-primaryText'
                                   }`}
                                 >
@@ -422,26 +422,29 @@ export const Chats: React.FC = () => {
                               className="w-full py-2 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-400 font-bold tracking-wider flex items-center justify-center gap-2 transition-all text-[10px]"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                              DELETE CHAT
+                              END CONVERSATION
                             </button>
                           ) : (
                             <div className="flex flex-col gap-2">
                               <div className="text-[10px] text-red-400 text-center font-bold tracking-wide flex items-center justify-center gap-1">
                                 <ShieldAlert className="w-4 h-4 animate-bounce" />
-                                DELETE PERMANENTLY?
+                                ERASE MESSAGE HISTORY?
                               </div>
+                              <p className="text-[9px] text-zinc-500 text-center font-mono uppercase tracking-wide">
+                                This removes the conversation for both participants.
+                              </p>
                               <div className="grid grid-cols-2 gap-1.5">
                                 <button
                                   onClick={handleDeleteChat}
                                   className="py-1.5 px-2 rounded-lg bg-red-500 text-white hover:bg-red-600 font-bold transition-all text-[10px]"
                                 >
-                                  CONFIRM
+                                  ERASE
                                 </button>
                                 <button
                                   onClick={() => setConfirmDelete(false)}
                                   className="py-1.5 px-2 rounded-lg bg-[#1b1b1b] border border-border text-secondaryText hover:text-primaryText hover:border-zinc-500 font-bold transition-all text-[10px]"
                                 >
-                                  CANCEL
+                                  KEEP CHAT
                                 </button>
                               </div>
                             </div>
@@ -492,7 +495,7 @@ export const Chats: React.FC = () => {
                     value={inputMsg}
                     onChange={handleInputChange}
                     placeholder="Type a message..."
-                    className="flex-1 min-h-11 px-4 py-2.5 rounded-xl bg-card border border-border text-primaryText text-sm focus:outline-none focus:border-accent/60 placeholder:text-zinc-600 transition-all font-sans"
+                    className="flex-1 min-h-11 px-4 py-2.5 rounded-xl bg-card border border-border text-primaryText text-sm focus:outline-none focus:border-accent/60 placeholder:text-zinc-600 transition-all font-sans hacker-panel"
                     disabled={sending}
                   />
                   <button
