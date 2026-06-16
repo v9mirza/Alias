@@ -342,7 +342,7 @@ export const Chats: React.FC = () => {
               className="flex-1 flex flex-col min-h-0"
             >
               {/* Active Chat Header Banner */}
-              <header className="sticky top-0 z-20 p-3 md:p-4 border-b border-border bg-card/70 backdrop-blur-sm flex items-center justify-between gap-3 hacker-panel">
+              <header className="sticky top-0 z-20 p-3 md:p-4 border-b border-border bg-card/70 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setActiveConversationId(null)}
@@ -517,8 +517,8 @@ export const Chats: React.FC = () => {
  
               {/* Typing indicator banner */}
               {partnerIsTyping && (
-                <div className="px-4 md:px-6 py-1 text-[10px] font-mono text-accent italic tracking-wider animate-pulse uppercase flex items-center gap-1 bg-surface/5">
-                  [{partner.username}] composing packet...
+                <div className="px-4 md:px-6 py-1 text-[10px] font-mono text-secondaryText tracking-wider uppercase flex items-center gap-1 bg-surface/5">
+                  [{partner.username}] typing...
                 </div>
               )}
  
@@ -536,7 +536,7 @@ export const Chats: React.FC = () => {
                   <button
                     type="submit"
                     disabled={!inputMsg.trim() || sending}
-                    className="min-h-11 min-w-11 px-3 rounded-xl bg-accent text-white hover:bg-[#7c4df2] disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="min-h-11 min-w-11 px-3 rounded-xl bg-accent text-white hover:bg-[#7c4df2] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                   >
                     <Send className="w-4.5 h-4.5" />
                   </button>
