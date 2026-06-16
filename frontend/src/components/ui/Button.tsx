@@ -13,13 +13,14 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseStyles = 'px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2';
+  const baseStyles =
+    'min-h-11 px-4 rounded-xl font-medium text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-[0.99] touch-manipulation';
   
   const variants = {
-    primary: 'bg-accent hover:bg-accentHover text-white shadow-sm border border-transparent active:scale-[0.98]',
-    secondary: 'bg-card border border-border text-primaryText hover:bg-border active:scale-[0.98]',
-    danger: 'bg-red-950/40 border border-red-900/60 text-red-400 hover:bg-red-950/60 active:scale-[0.98]',
-    ghost: 'bg-transparent text-secondaryText hover:text-primaryText hover:bg-surface/50'
+    primary: 'bg-accent hover:bg-accentHover text-white shadow-sm shadow-accent/20 border border-transparent',
+    secondary: 'bg-card border border-border text-primaryText hover:border-accent/40 hover:bg-surface/60',
+    danger: 'bg-red-950/40 border border-red-900/60 text-red-300 hover:bg-red-950/60',
+    ghost: 'bg-transparent text-secondaryText hover:text-primaryText hover:bg-surface/50 border border-transparent'
   };
 
   return (

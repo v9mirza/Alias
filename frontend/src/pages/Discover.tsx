@@ -45,35 +45,33 @@ export const Discover: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto">
-      {/* Title */}
-      <div className="flex items-center gap-3 mb-8">
-        <Compass className="w-5 h-5 text-accent" />
-        <h1 className="text-lg font-bold tracking-tight text-primaryText uppercase font-mono">
-          DISCOVER
-        </h1>
+    <div className="flex-1 flex flex-col px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <Compass className="w-5 h-5 text-accent" />
+          <h1 className="text-sm md:text-lg font-bold tracking-tight text-primaryText uppercase font-mono">DISCOVER</h1>
+        </div>
+        <span className="text-[10px] font-mono uppercase tracking-wider text-secondaryText">Search by alias</span>
       </div>
 
-      {/* Search Input */}
-      <div className="max-w-md mb-8">
+      <div className="mb-5">
         <SearchBar
           value={query}
           onSearchChange={setQuery}
-          placeholder="Search for users..."
+          placeholder="Find users..."
         />
       </div>
 
-      {/* Grid Results */}
       <div className="flex-1 flex flex-col justify-between">
         {isLoadingSearch ? (
-          <div className="flex-1 flex items-center justify-center min-h-[300px]">
+          <div className="flex-1 flex items-center justify-center min-h-[260px]">
             <Loader label="SEARCHING USERS..." />
           </div>
         ) : searchResults.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-4"
           >
             {searchResults.map((user) => (
               <UserCard
@@ -86,7 +84,7 @@ export const Discover: React.FC = () => {
             ))}
           </motion.div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-xl min-h-[300px] text-center p-6 bg-card/10">
+          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 bg-card/20">
             <Users className="w-8 h-8 text-zinc-600 mb-3" />
             <h3 className="font-mono text-xs font-bold uppercase text-secondaryText tracking-widest">
               {query.trim() ? 'NO USERS FOUND' : 'SEARCH FOR USERS BY USERNAME'}
@@ -97,9 +95,8 @@ export const Discover: React.FC = () => {
           </div>
         )}
 
-        {/* Pagination Navigation */}
         {searchPagination && searchPagination.pages > 1 && (
-          <div className="flex items-center justify-center gap-4 mt-8 border-t border-border pt-6">
+          <div className="flex items-center justify-center gap-4 mt-6 border-t border-border pt-4">
             <button
               onClick={() => handlePageChange(searchPagination.page - 1)}
               disabled={searchPagination.page === 1}

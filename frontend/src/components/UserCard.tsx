@@ -48,7 +48,7 @@ export const UserCard: React.FC<UserCardProps> = ({
   return (
     <motion.div
       whileHover={{ y: -2 }}
-      className="p-5 rounded-xl bg-card border border-border flex flex-col gap-4 transition-colors hover:bg-card/80 relative overflow-hidden"
+      className="p-4 rounded-2xl bg-card border border-border flex flex-col gap-4 transition-colors hover:bg-card/80 relative overflow-hidden"
     >
       <div className="flex items-start gap-4">
         <Avatar username={user.username} size="md" isOnline={user.isOnline} />
@@ -77,7 +77,7 @@ export const UserCard: React.FC<UserCardProps> = ({
       )}
 
       {/* Relationship CTA actions */}
-      <div className="mt-2 flex flex-col gap-2">
+      <div className="mt-1.5 flex flex-col gap-2">
         {alreadyChatting ? (
           <Button variant="secondary" disabled className="w-full text-xs font-mono">
             <Check className="w-3.5 h-3.5" /> CHAT ACTIVE

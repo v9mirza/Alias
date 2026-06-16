@@ -33,22 +33,18 @@ export const Settings: React.FC = () => {
   }, [accent]);
 
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto max-w-2xl">
-      {/* Title */}
-      <div className="flex items-center gap-3 mb-8">
+    <div className="flex-1 flex flex-col px-4 md:px-6 py-4 md:py-6 overflow-y-auto max-w-3xl">
+      <div className="flex items-center gap-3 mb-4">
         <SettingsIcon className="w-5 h-5 text-accent" />
-        <h1 className="text-lg font-bold tracking-tight text-primaryText uppercase font-mono">
-          SETTINGS
-        </h1>
+        <h1 className="text-sm md:text-lg font-bold tracking-tight text-primaryText uppercase font-mono">SETTINGS</h1>
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="space-y-4 md:space-y-6"
       >
-        {/* Appearance Card */}
-        <div className="bg-card/10 border border-border p-6 rounded-2xl space-y-4">
+        <div className="bg-card/20 border border-border p-4 md:p-6 rounded-2xl space-y-4">
           <h2 className="text-sm font-mono font-bold text-primaryText uppercase flex items-center gap-2">
             <Palette className="w-4.5 h-4.5 text-accent" /> APPEARANCE
           </h2>
@@ -56,12 +52,12 @@ export const Settings: React.FC = () => {
             Customize the look and feel of the app
           </p>
 
-          <div className="flex items-center justify-between border-t border-border/40 pt-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-border/40 pt-4">
             <span className="text-xs text-primaryText font-medium">UI Accent Color</span>
-            <div className="flex gap-2 bg-card border border-border p-1 rounded-lg">
+            <div className="flex gap-2 bg-card border border-border p-1 rounded-xl w-full sm:w-auto">
               <button
                 onClick={() => applyAccent('violet')}
-                className={`px-3 py-1.5 rounded-md text-xs font-mono font-bold tracking-wider transition-all ${
+                className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
                   accent === 'violet'
                     ? 'bg-accent text-white shadow-sm'
                     : 'text-secondaryText hover:text-primaryText'
@@ -71,7 +67,7 @@ export const Settings: React.FC = () => {
               </button>
               <button
                 onClick={() => applyAccent('indigo')}
-                className={`px-3 py-1.5 rounded-md text-xs font-mono font-bold tracking-wider transition-all ${
+                className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
                   accent === 'indigo'
                     ? 'bg-[#6366F1] text-white shadow-sm'
                     : 'text-secondaryText hover:text-primaryText'
@@ -83,23 +79,17 @@ export const Settings: React.FC = () => {
           </div>
         </div>
 
-        {/* Security & Protocol Info Card */}
-        <div className="bg-card/10 border border-border p-6 rounded-2xl space-y-4">
+        <div className="bg-card/20 border border-border p-4 md:p-6 rounded-2xl space-y-4">
           <h2 className="text-sm font-mono font-bold text-primaryText uppercase flex items-center gap-2">
             <ShieldAlert className="w-4.5 h-4.5 text-yellow-500" /> SECURITY INFORMATION
           </h2>
           <div className="text-xs text-secondaryText space-y-2 leading-relaxed">
-            <p>
-              • Disappearing messages are automatically deleted according to the conversation timer.
-            </p>
-            <p>
-              • Your login session is kept secure. Logging out clears all session data.
-            </p>
+            <p>• Disappearing chats auto-delete based on configured timers.</p>
+            <p>• Login session is local-device scoped. Logging out clears session state.</p>
           </div>
         </div>
 
-        {/* About Card */}
-        <div className="bg-card/10 border border-border p-6 rounded-2xl space-y-2">
+        <div className="bg-card/20 border border-border p-4 md:p-6 rounded-2xl space-y-2">
           <h2 className="text-xs font-mono font-bold text-primaryText uppercase flex items-center gap-2">
             <Info className="w-4 h-4 text-zinc-500" /> ABOUT ALIAS
           </h2>
@@ -108,7 +98,6 @@ export const Settings: React.FC = () => {
           </p>
         </div>
 
-        {/* Logout button */}
         <div className="pt-4 flex">
           <Button
             variant="danger"

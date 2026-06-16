@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useSocketStore } from './store/useSocketStore.js';
 
@@ -14,6 +15,60 @@ const Discover = lazy(() => import('./pages/Discover.js'));
 const Requests = lazy(() => import('./pages/Requests.js'));
 const Profile = lazy(() => import('./pages/Profile.js'));
 const Settings = lazy(() => import('./pages/Settings.js'));
+
+const AnimatedRoutes: React.FC = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.18, ease: 'easeOut' }}
+        className="h-full"
+      >
+        <Routes location={location}>
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            }
+          />
+
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <MainLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/chats" replace />} />
+            <Route path="chats" element={<Chats />} />
+            <Route path="discover" element={<Discover />} />
+            <Route path="requests" element={<Requests />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/chats" replace />} />
+        </Routes>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
 
 // Protected Route Guard
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -66,47 +121,7 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<Loader fullscreen label="LOADING VIEW..." />}>
-      <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <PublicRoute>
-              <Register />
-            </PublicRoute>
-          }
-        />
-
-        {/* Protected Dashboard Layout Routes */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <MainLayout />
-            </ProtectedRoute>
-          }
-        >
-          {/* Default redirect to chats */}
-          <Route index element={<Navigate to="/chats" replace />} />
-          
-          <Route path="chats" element={<Chats />} />
-          <Route path="discover" element={<Discover />} />
-          <Route path="requests" element={<Requests />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-
-        {/* Fallback route */}
-        <Route path="*" element={<Navigate to="/chats" replace />} />
-      </Routes>
+        <AnimatedRoutes />
       </Suspense>
     </BrowserRouter>
   );

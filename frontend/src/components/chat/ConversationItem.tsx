@@ -46,7 +46,7 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-4 rounded-xl flex items-center gap-3 border transition-all duration-150 ${
+      className={`w-full text-left min-h-16 p-3.5 md:p-4 rounded-xl flex items-center gap-3 border transition-all duration-150 ${
         isActive
           ? 'bg-card border-border shadow-sm'
           : 'bg-transparent border-transparent hover:bg-surface/50'

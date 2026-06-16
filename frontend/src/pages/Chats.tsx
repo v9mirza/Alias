@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, Send, Clock, Circle, Settings, Trash2, ShieldAlert } from 'lucide-react';
+import { MessageSquare, Send, Clock, Circle, Settings, Trash2, ShieldAlert, ArrowLeft } from 'lucide-react';
 import { useChatStore } from '../store/useChatStore.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useSocketStore } from '../store/useSocketStore.js';
@@ -275,13 +275,17 @@ export const Chats: React.FC = () => {
       )}
 
       {/* Left panel: Conversations List */}
-      <section className="w-80 border-r border-border flex flex-col bg-surface/30 min-h-0">
-        <div className="p-4 border-b border-border">
+      <section
+        className={`${
+          activeConversationId ? 'hidden md:flex' : 'flex'
+        } w-full md:w-80 border-r border-border flex-col bg-surface/30 min-h-0`}
+      >
+        <div className="px-4 py-3 border-b border-border">
           <h2 className="font-mono text-xs font-bold uppercase tracking-widest text-secondaryText">
             CHATS
           </h2>
         </div>
-        <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-1">
+        <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-1.5">
           {isLoadingConversations ? (
             <div className="py-12 flex justify-center">
               <Loader label="LOADING CHATS..." />
@@ -309,7 +313,11 @@ export const Chats: React.FC = () => {
       </section>
 
       {/* Right panel: Active Chat dialogue */}
-      <section className="flex-1 flex flex-col bg-background min-h-0 relative">
+      <section
+        className={`${
+          !activeConversationId ? 'hidden md:flex' : 'flex'
+        } flex-1 flex-col bg-background min-h-0 relative`}
+      >
         <AnimatePresence mode="wait">
           {activeConversationId && activeConv && partner ? (
             <motion.div
@@ -320,8 +328,15 @@ export const Chats: React.FC = () => {
               className="flex-1 flex flex-col min-h-0"
             >
               {/* Active Chat Header Banner */}
-              <header className="p-4 border-b border-border bg-card/10 flex items-center justify-between">
+              <header className="sticky top-0 z-20 p-3 md:p-4 border-b border-border bg-card/70 backdrop-blur-sm flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setActiveConversationId(null)}
+                    className="md:hidden p-2 rounded-lg border border-border bg-card/40 text-secondaryText hover:text-primaryText"
+                    aria-label="Back to chats"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                  </button>
                   <Avatar username={partner.username} size="sm" isOnline={partner.isOnline} />
                   <div>
                     <h3 className="font-mono text-sm font-bold text-primaryText">
@@ -439,7 +454,7 @@ export const Chats: React.FC = () => {
               </header>
  
               {/* Message Scroller log */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              <div className="flex-1 overflow-y-auto px-3 md:px-6 py-4 space-y-3.5">
                 {isLoadingMessages ? (
                   <div className="py-12 flex justify-center">
                     <Loader label="LOADING MESSAGES..." />
@@ -464,26 +479,26 @@ export const Chats: React.FC = () => {
  
               {/* Typing indicator banner */}
               {partnerIsTyping && (
-                <div className="px-6 py-1 text-[10px] font-mono text-accent italic tracking-wider animate-pulse uppercase flex items-center gap-1 bg-surface/5">
+                <div className="px-4 md:px-6 py-1 text-[10px] font-mono text-accent italic tracking-wider animate-pulse uppercase flex items-center gap-1 bg-surface/5">
                   {partner.username} is typing...
                 </div>
               )}
  
               {/* Input Footer Form */}
-              <footer className="p-4 border-t border-border bg-surface/20">
+              <footer className="p-3 md:p-4 border-t border-border bg-surface/30">
                 <form onSubmit={handleSend} className="flex gap-2">
                   <input
                     type="text"
                     value={inputMsg}
                     onChange={handleInputChange}
                     placeholder="Type a message..."
-                    className="flex-1 px-4 py-2.5 rounded-lg bg-card border border-border text-primaryText text-sm focus:outline-none focus:border-accent/60 placeholder:text-zinc-600 transition-all font-sans"
+                    className="flex-1 min-h-11 px-4 py-2.5 rounded-xl bg-card border border-border text-primaryText text-sm focus:outline-none focus:border-accent/60 placeholder:text-zinc-600 transition-all font-sans"
                     disabled={sending}
                   />
                   <button
                     type="submit"
                     disabled={!inputMsg.trim() || sending}
-                    className="p-2.5 rounded-lg bg-accent text-white hover:bg-[#7c4df2] disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                    className="min-h-11 min-w-11 px-3 rounded-xl bg-accent text-white hover:bg-[#7c4df2] disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
                   >
                     <Send className="w-4.5 h-4.5" />
                   </button>

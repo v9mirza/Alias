@@ -29,8 +29,8 @@ export const Avatar: React.FC<AvatarProps> = ({
   };
 
   const sizes = {
-    sm: 'w-8 h-8 text-[10px]',
-    md: 'w-10 h-10 text-xs',
+    sm: 'w-9 h-9 text-[10px]',
+    md: 'w-11 h-11 text-xs',
     lg: 'w-16 h-16 text-lg'
   };
 
@@ -41,7 +41,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     <div className={`relative inline-flex flex-shrink-0 ${className}`}>
       <div
         style={{ backgroundColor: bgColor }}
-        className={`rounded-full flex items-center justify-center font-mono font-bold text-primaryText border border-border shadow-inner ${sizes[size]}`}
+        className={`rounded-full flex items-center justify-center font-mono font-bold text-primaryText border border-border shadow-inner shadow-black/40 ${sizes[size]}`}
       >
         {initials}
       </div>

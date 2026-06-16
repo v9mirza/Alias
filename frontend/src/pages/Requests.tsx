@@ -48,20 +48,16 @@ export const Requests: React.FC = () => {
   const listData = activeTab === 'incoming' ? requests.incoming : requests.sent;
 
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto">
-      {/* Title */}
-      <div className="flex items-center gap-3 mb-8">
+    <div className="flex-1 flex flex-col px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
+      <div className="flex items-center gap-3 mb-4">
         <Inbox className="w-5 h-5 text-accent" />
-        <h1 className="text-lg font-bold tracking-tight text-primaryText uppercase font-mono">
-          CHAT REQUESTS
-        </h1>
+        <h1 className="text-sm md:text-lg font-bold tracking-tight text-primaryText uppercase font-mono">CHAT REQUESTS</h1>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-4 border-b border-border pb-px mb-6">
+      <div className="flex gap-3 border-b border-border pb-px mb-4">
         <button
           onClick={() => setActiveTab('incoming')}
-          className={`pb-3 font-mono text-xs font-bold tracking-widest transition-all relative ${
+          className={`pb-3 font-mono text-[11px] font-bold tracking-widest transition-all relative ${
             activeTab === 'incoming' ? 'text-accent' : 'text-secondaryText hover:text-primaryText'
           }`}
         >
@@ -75,7 +71,7 @@ export const Requests: React.FC = () => {
         </button>
         <button
           onClick={() => setActiveTab('sent')}
-          className={`pb-3 font-mono text-xs font-bold tracking-widest transition-all relative ${
+          className={`pb-3 font-mono text-[11px] font-bold tracking-widest transition-all relative ${
             activeTab === 'sent' ? 'text-accent' : 'text-secondaryText hover:text-primaryText'
           }`}
         >
@@ -89,7 +85,6 @@ export const Requests: React.FC = () => {
         </button>
       </div>
 
-      {/* Requests List */}
       <div className="flex-1 flex flex-col">
         {isLoadingRequests ? (
           <div className="flex-1 flex items-center justify-center min-h-[300px]">
@@ -99,7 +94,7 @@ export const Requests: React.FC = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col gap-3 max-w-2xl"
+            className="flex flex-col gap-3 max-w-3xl"
           >
             <AnimatePresence mode="popLayout">
               {listData.map((req) => {
@@ -113,7 +108,7 @@ export const Requests: React.FC = () => {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, x: -20 }}
-                    className="p-4 rounded-xl bg-card border border-border flex items-center justify-between gap-4"
+                    className="p-4 rounded-2xl bg-card border border-border flex items-center justify-between gap-3"
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       <div className="relative">
@@ -142,10 +137,10 @@ export const Requests: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5">
                       {req.isTemporary && (
-                        <Badge variant="primary" className="hidden sm:inline-block">
-                          TEMPORARY • {req.expiryDuration}
+                        <Badge variant="primary" className="hidden sm:inline-flex">
+                          TEMP • {req.expiryDuration}
                         </Badge>
                       )}
 
@@ -155,7 +150,7 @@ export const Requests: React.FC = () => {
                             variant="ghost"
                             onClick={() => handleReject(req._id)}
                             disabled={actionId !== null}
-                            className="p-2 rounded-lg"
+                            className="px-3"
                           >
                             <X className="w-4 h-4 text-red-400" />
                           </Button>
@@ -164,7 +159,7 @@ export const Requests: React.FC = () => {
                             onClick={() => handleAccept(req._id)}
                             isLoading={actionId === req._id}
                             disabled={actionId !== null}
-                            className="p-2 rounded-lg font-mono text-xs"
+                            className="px-3.5 font-mono text-xs"
                           >
                             <Check className="w-4 h-4" /> ACCEPT
                           </Button>
@@ -181,7 +176,7 @@ export const Requests: React.FC = () => {
             </AnimatePresence>
           </motion.div>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-xl min-h-[300px] text-center p-6 bg-card/10 max-w-2xl">
+          <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 bg-card/20 max-w-3xl">
             <Inbox className="w-8 h-8 text-zinc-600 mb-3" />
             <h3 className="font-mono text-xs font-bold uppercase text-secondaryText tracking-widest">
               NO PENDING REQUESTS

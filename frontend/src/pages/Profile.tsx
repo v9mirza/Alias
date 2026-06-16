@@ -41,21 +41,17 @@ export const Profile: React.FC = () => {
   if (!user) return null;
 
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto max-w-2xl">
-      {/* Title */}
-      <div className="flex items-center gap-3 mb-8">
+    <div className="flex-1 flex flex-col px-4 md:px-6 py-4 md:py-6 overflow-y-auto max-w-3xl">
+      <div className="flex items-center gap-3 mb-4">
         <UserIcon className="w-5 h-5 text-accent" />
-        <h1 className="text-lg font-bold tracking-tight text-primaryText uppercase font-mono">
-          PROFILE
-        </h1>
+        <h1 className="text-sm md:text-lg font-bold tracking-tight text-primaryText uppercase font-mono">PROFILE</h1>
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6 bg-card/10 border border-border p-6 rounded-2xl"
+        className="space-y-6 bg-card/20 border border-border p-4 md:p-6 rounded-2xl"
       >
-        {/* User visual identity */}
         <div className="flex items-center gap-5 border-b border-border/60 pb-6">
           <Avatar username={user.username} size="lg" />
           <div>
@@ -69,7 +65,6 @@ export const Profile: React.FC = () => {
           </div>
         </div>
 
-        {/* Bio textarea */}
         <div className="space-y-2">
           <label className="text-xs font-mono font-bold uppercase tracking-wider text-secondaryText block">
             Bio ({160 - bio.length} characters remaining)
@@ -79,17 +74,16 @@ export const Profile: React.FC = () => {
             onChange={(e) => setBio(e.target.value.slice(0, 160))}
             placeholder="Tell us about yourself..."
             rows={3}
-            className="w-full px-3.5 py-2.5 rounded-lg bg-card border border-border text-primaryText text-sm transition-all placeholder:text-[#52525b] focus:outline-none focus:border-accent/60 resize-none font-sans"
+            className="w-full min-h-28 px-4 py-3 rounded-xl bg-card border border-border text-primaryText text-sm transition-all placeholder:text-[#66788f] focus:outline-none focus:border-accent/60 resize-none font-sans"
           />
         </div>
 
-        {/* Interests builder */}
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-xs font-mono font-bold uppercase tracking-wider text-secondaryText block">
               Interests
             </label>
-            <div className="flex flex-wrap gap-2 min-h-[40px] p-3 rounded-lg border border-border bg-card/30">
+            <div className="flex flex-wrap gap-2 min-h-[44px] p-3 rounded-xl border border-border bg-card/30">
               {interests.length > 0 ? (
                 interests.map((tag) => (
                   <span
@@ -114,16 +108,15 @@ export const Profile: React.FC = () => {
             </div>
           </div>
 
-          {/* Add Interest input */}
-          <form onSubmit={handleAddTag} className="flex gap-2 max-w-sm">
+          <form onSubmit={handleAddTag} className="flex flex-col sm:flex-row gap-2 max-w-lg">
             <Input
               type="text"
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
               placeholder="E.g., Coding"
-              className="py-1.5"
+              className="sm:max-w-[280px]"
             />
-            <Button type="submit" variant="secondary" className="px-3.5 py-2">
+            <Button type="submit" variant="secondary" className="px-4">
               <Plus className="w-4.5 h-4.5" />
             </Button>
           </form>
@@ -135,13 +128,12 @@ export const Profile: React.FC = () => {
           </div>
         )}
 
-        {/* Save actions */}
         <div className="pt-4 border-t border-border/60 flex items-center gap-4">
           <Button
             variant="primary"
             onClick={handleSave}
             isLoading={isLoading}
-            className="font-mono text-xs uppercase"
+            className="font-mono text-xs uppercase w-full sm:w-auto px-6"
           >
             {saveSuccess ? (
               <span className="flex items-center gap-1.5">

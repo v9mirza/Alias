@@ -19,14 +19,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div className={`relative w-full ${className}`}>
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
         <Search className="h-4 w-4 text-zinc-500" />
       </div>
       <input
         type="text"
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full pl-9 pr-4 py-2.5 rounded-lg bg-card border border-border text-primaryText text-sm placeholder:text-[#52525b] transition-all focus:outline-none focus:border-accent/60"
+        className="w-full min-h-11 pl-10 pr-4 rounded-xl bg-card border border-border text-primaryText text-sm placeholder:text-[#66788f] transition-all focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/40"
         {...props}
       />
     </div>

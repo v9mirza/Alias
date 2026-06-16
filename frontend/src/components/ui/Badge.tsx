@@ -11,7 +11,8 @@ export const Badge: React.FC<BadgeProps> = ({
   variant = 'secondary',
   className = '',
 }) => {
-  const baseStyles = 'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider';
+  const baseStyles =
+    'inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider';
 
   const variants = {
     primary: 'bg-accent/10 text-accent border border-accent/25',
