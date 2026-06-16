@@ -87,10 +87,10 @@ export const Discover: React.FC = () => {
           <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 bg-card/20">
             <Users className="w-8 h-8 text-zinc-600 mb-3" />
             <h3 className="font-mono text-xs font-bold uppercase text-secondaryText tracking-widest">
-              {query.trim() ? 'NO USERS FOUND' : 'SEARCH FOR USERS BY USERNAME'}
+              {query.trim() ? 'NO MATCH IN DIRECTORY' : 'QUERY USER DIRECTORY'}
             </h3>
             <p className="text-[10px] text-zinc-500 font-mono mt-1 uppercase">
-              {query.trim() ? 'Try a different search query' : 'Find other users to start a chat'}
+              {query.trim() ? 'Adjust your alias query and retry' : 'Use /discover to open a new relay'}
             </p>
           </div>
         )}

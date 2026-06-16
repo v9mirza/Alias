@@ -6,9 +6,10 @@ import type { Message } from '../../types/index.js';
 interface ChatBubbleProps {
   message: Message;
   isOutgoing: boolean;
+  showMeta?: boolean;
 }
 
-export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isOutgoing }) => {
+export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isOutgoing, showMeta = true }) => {
   const formatTime = (isoString: string) => {
     const date = new Date(isoString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -31,20 +32,22 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isOutgoing }) =
         >
           <p className="whitespace-pre-wrap break-words">{message.content}</p>
         </div>
-        <div className="flex items-center gap-1.5 px-1.5">
-          <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider">
-            {formatTime(message.createdAt)}
-          </span>
-          {isOutgoing && (
-            <span className="text-zinc-500">
-              {message.isRead ? (
-                <CheckCheck className="w-3.5 h-3.5 text-accent" />
-              ) : (
-                <Check className="w-3.5 h-3.5 text-zinc-600" />
-              )}
+        {showMeta && (
+          <div className="flex items-center gap-1.5 px-1.5">
+            <span className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider">
+              {formatTime(message.createdAt)}
             </span>
-          )}
-        </div>
+            {isOutgoing && (
+              <span className="text-zinc-500">
+                {message.isRead ? (
+                  <CheckCheck className="w-3.5 h-3.5 text-accent" />
+                ) : (
+                  <Check className="w-3.5 h-3.5 text-zinc-600" />
+                )}
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </motion.div>
   );

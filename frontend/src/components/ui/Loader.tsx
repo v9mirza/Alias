@@ -11,16 +11,16 @@ export const Loader: React.FC<LoaderProps> = ({
 }) => {
   const content = (
     <div className="flex flex-col items-center justify-center gap-4">
-      {/* Nothing OS inspired loader: rotating minimal circle with monospaced text */}
-      <div className="relative w-12 h-12 flex items-center justify-center">
-        <div className="absolute w-full h-full rounded-full border-t border-r border-[#262626] animate-spin"></div>
-        <div className="w-1.5 h-1.5 rounded-full bg-accent animate-ping"></div>
+      <div className="w-40 h-8 border border-border rounded-md bg-card/50 p-1.5 overflow-hidden">
+        <div className="h-full w-10 bg-accent/80 rounded-sm animate-[pulse_1.2s_linear_infinite]"></div>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
+        <span className="text-[11px] font-mono font-bold tracking-wider text-accent uppercase">
+          SYS
+        </span>
         <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-secondaryText uppercase">
           {label}
         </span>
-        <span className="text-accent font-bold font-mono animate-pulse">|</span>
       </div>
     </div>
   );

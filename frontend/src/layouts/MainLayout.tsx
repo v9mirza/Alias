@@ -16,12 +16,12 @@ export const MainLayout: React.FC = () => {
     navigate('/login');
   };
 
-  const navItems: { name: string; path: string; icon: React.ElementType }[] = [
-    { name: 'CHATS', path: '/chats', icon: MessageSquare },
-    { name: 'DISCOVER', path: '/discover', icon: Compass },
-    { name: 'REQUESTS', path: '/requests', icon: Inbox },
-    { name: 'PROFILE', path: '/profile', icon: UserIcon },
-    { name: 'SETTINGS', path: '/settings', icon: SettingsIcon },
+  const navItems: { name: string; command: string; path: string; icon: React.ElementType }[] = [
+    { name: 'CHATS', command: '/chats', path: '/chats', icon: MessageSquare },
+    { name: 'DISCOVER', command: '/discover', path: '/discover', icon: Compass },
+    { name: 'REQUESTS', command: '/requests', path: '/requests', icon: Inbox },
+    { name: 'PROFILE', command: '/profile', path: '/profile', icon: UserIcon },
+    { name: 'SETTINGS', command: '/settings', path: '/settings', icon: SettingsIcon },
   ];
 
   const currentSection = navItems.find((item) => location.pathname.startsWith(item.path))?.name || 'ALIAS';
@@ -52,7 +52,7 @@ export const MainLayout: React.FC = () => {
                 }
               >
                 <item.icon className="w-4 h-4" />
-                {item.name}
+                {item.command}
               </NavLink>
             ))}
           </nav>
@@ -73,11 +73,15 @@ export const MainLayout: React.FC = () => {
           <div className="flex items-center justify-between px-2 text-[10px]">
             <span className="font-mono font-bold tracking-wider text-zinc-500 flex items-center gap-1.5">
               <Radio className={`w-3.5 h-3.5 ${isConnected ? 'text-green-500 animate-pulse' : 'text-zinc-600'}`} />
-              CONNECTION:
+              [RELAY]:
             </span>
             <span className={`font-mono font-bold tracking-widest ${isConnected ? 'text-green-400' : 'text-zinc-500'}`}>
-              {isConnected ? 'CONNECTED' : 'OFFLINE'}
+              {isConnected ? 'ONLINE' : 'OFFLINE'}
             </span>
+          </div>
+
+          <div className="px-2 text-[9px] font-mono text-zinc-500 uppercase tracking-wider">
+            [TLS] enabled • [node] local
           </div>
 
           <button
@@ -127,7 +131,7 @@ export const MainLayout: React.FC = () => {
                 }
               >
                 <item.icon className="w-4.5 h-4.5" />
-                <span>{item.name}</span>
+                <span>{item.command.replace('/', '')}</span>
               </NavLink>
             ))}
           </div>

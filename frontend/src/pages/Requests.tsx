@@ -179,12 +179,12 @@ export const Requests: React.FC = () => {
           <div className="flex-1 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl min-h-[260px] text-center p-6 bg-card/20 max-w-3xl">
             <Inbox className="w-8 h-8 text-zinc-600 mb-3" />
             <h3 className="font-mono text-xs font-bold uppercase text-secondaryText tracking-widest">
-              NO PENDING REQUESTS
+              REQUEST QUEUE EMPTY
             </h3>
             <p className="text-[10px] text-zinc-500 font-mono mt-1 uppercase">
               {activeTab === 'incoming'
-                ? 'Your request queue is empty'
-                : 'Search for users in the Discover page to send chat requests'}
+                ? 'No inbound pings in relay queue'
+                : 'Open /discover to dispatch a new request'}
             </p>
           </div>
         )}

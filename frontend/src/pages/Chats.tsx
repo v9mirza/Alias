@@ -46,6 +46,16 @@ const RemainingTimeBadge: React.FC<{ expiresAt: string }> = ({ expiresAt }) => {
   );
 };
 
+const DateDivider: React.FC<{ label: string }> = ({ label }) => (
+  <div className="flex items-center gap-2 my-3">
+    <div className="h-px flex-1 bg-border/70" />
+    <span className="text-[9px] px-2 py-1 rounded-md border border-border bg-card/40 font-mono text-zinc-500 uppercase tracking-wider">
+      {label}
+    </span>
+    <div className="h-px flex-1 bg-border/70" />
+  </div>
+);
+
 export const Chats: React.FC = () => {
   const { user } = useAuthStore();
   const {
@@ -240,18 +250,22 @@ export const Chats: React.FC = () => {
     return '1h';
   };
 
+  const getDayLabel = (isoString: string) => {
+    const d = new Date(isoString);
+    const today = new Date();
+    const y = new Date();
+    y.setDate(today.getDate() - 1);
+    const dateOnly = d.toDateString();
+    if (dateOnly === today.toDateString()) return 'today';
+    if (dateOnly === y.toDateString()) return 'yesterday';
+    return d.toLocaleDateString();
+  };
+
   // Check if partner is typing
   const partnerIsTyping =
     activeConversationId &&
     partner &&
     typingUsers[activeConversationId]?.includes(partner.id);
-
-  console.log('Typing Status debug:', {
-    activeConversationId,
-    partnerId: partner?.id,
-    typingList: activeConversationId ? typingUsers[activeConversationId] : null,
-    partnerIsTyping
-  });
 
   return (
     <div className="flex-1 flex min-h-0 bg-background">
@@ -455,6 +469,11 @@ export const Chats: React.FC = () => {
                   </AnimatePresence>
                 </div>
               </header>
+
+              <div className="px-4 md:px-6 py-1.5 border-b border-border/60 bg-surface/25 flex items-center justify-between text-[9px] font-mono uppercase tracking-wider text-zinc-500">
+                <span>[session] encrypted • relay active</span>
+                <span>[rtt] ~24ms • [zone] local</span>
+              </div>
  
               {/* Message Scroller log */}
               <div className="flex-1 overflow-y-auto px-3 md:px-6 py-4 space-y-3.5">
@@ -463,18 +482,34 @@ export const Chats: React.FC = () => {
                     <Loader label="LOADING MESSAGES..." />
                   </div>
                 ) : messages.length > 0 ? (
-                  messages.map((msg) => (
-                    <ChatBubble
-                      key={msg._id}
-                      message={msg}
-                      isOutgoing={msg.sender.id === user?.id || (typeof msg.sender === 'string' && msg.sender === user?.id)}
-                    />
-                  ))
+                  messages.map((msg, idx) => {
+                    const prev = idx > 0 ? messages[idx - 1] : null;
+                    const sameSenderAsPrev = !!prev && prev.sender.id === msg.sender.id;
+                    const sameMinuteAsPrev =
+                      !!prev && new Date(prev.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) ===
+                        new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const showMeta = !(sameSenderAsPrev && sameMinuteAsPrev);
+                    const showDateDivider = !prev || getDayLabel(prev.createdAt) !== getDayLabel(msg.createdAt);
+
+                    return (
+                      <React.Fragment key={msg._id}>
+                        {showDateDivider && <DateDivider label={getDayLabel(msg.createdAt)} />}
+                        <ChatBubble
+                          message={msg}
+                          showMeta={showMeta}
+                          isOutgoing={
+                            msg.sender.id === user?.id ||
+                            (typeof msg.sender === 'string' && msg.sender === user?.id)
+                          }
+                        />
+                      </React.Fragment>
+                    );
+                  })
                 ) : (
                   <div className="h-full flex flex-col items-center justify-center text-center text-zinc-600 p-6">
                     <MessageSquare className="w-8 h-8 mb-2 opacity-30" />
-                    <p className="font-mono text-xs uppercase tracking-wide">Chat session started.</p>
-                    <p className="text-[10px] font-mono uppercase tracking-wider opacity-60">Send a message to start chatting.</p>
+                    <p className="font-mono text-xs uppercase tracking-wide">No relay traffic.</p>
+                    <p className="text-[10px] font-mono uppercase tracking-wider opacity-60">Send a secure ping to begin session.</p>
                   </div>
                 )}
                 <div ref={messagesEndRef} />
@@ -483,7 +518,7 @@ export const Chats: React.FC = () => {
               {/* Typing indicator banner */}
               {partnerIsTyping && (
                 <div className="px-4 md:px-6 py-1 text-[10px] font-mono text-accent italic tracking-wider animate-pulse uppercase flex items-center gap-1 bg-surface/5">
-                  {partner.username} is typing...
+                  [{partner.username}] composing packet...
                 </div>
               )}
  
