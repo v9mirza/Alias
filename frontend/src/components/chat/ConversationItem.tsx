@@ -1,5 +1,4 @@
 import React from 'react';
-import { Clock } from 'lucide-react';
 import type { Conversation } from '../../types/index.js';
 import Avatar from '../ui/Avatar.js';
 
@@ -7,16 +6,14 @@ interface ConversationItemProps {
   conversation: Conversation;
   isActive: boolean;
   onClick: () => void;
-  nowTs: number;
 }
 
 export const ConversationItem: React.FC<ConversationItemProps> = ({
   conversation,
   isActive,
   onClick,
-  nowTs
 }) => {
-  const { otherParticipant, latestMessage, unreadCount, isTemporary, expiresAt } = conversation;
+  const { otherParticipant, latestMessage, unreadCount } = conversation;
   
   if (!otherParticipant) return null;
 
@@ -25,21 +22,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
     if (!isoString) return '';
     const date = new Date(isoString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
-  };
-
-  // Calculate remaining time for temporary chats
-  const getRemainingTime = (expiryString: string | null) => {
-    if (!expiryString) return '';
-    const diff = new Date(expiryString).getTime() - nowTs;
-    if (diff <= 0) return 'EXPIRED';
-    
-    const mins = Math.floor(diff / 60000);
-    const hrs = Math.floor(mins / 60);
-    const days = Math.floor(hrs / 24);
-
-    if (days > 0) return `${days}d`;
-    if (hrs > 0) return `${hrs}h`;
-    return `${mins}m`;
   };
 
   return (
@@ -69,13 +51,6 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
         <p className="text-xs text-secondaryText/90 truncate mt-1 max-w-[190px]">
           {latestMessage ? latestMessage.content : 'No messages yet.'}
         </p>
-
-        {isTemporary && expiresAt && (
-          <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-mono text-accent/80 tabular-nums">
-            <Clock className="w-3 h-3" />
-            {getRemainingTime(expiresAt)}
-          </span>
-        )}
       </div>
 
       {unreadCount > 0 && (

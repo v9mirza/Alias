@@ -310,7 +310,6 @@ export const Chats: React.FC = () => {
                 key={conv._id}
                 conversation={conv}
                 isActive={conv._id === activeConversationId}
-                nowTs={nowTs}
                 onClick={() => {
                   setShowSettings(false);
                   setConfirmDelete(false);
