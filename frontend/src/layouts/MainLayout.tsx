@@ -27,7 +27,7 @@ export const MainLayout: React.FC = () => {
   const currentSection = navItems.find((item) => location.pathname.startsWith(item.path))?.name || 'ALIAS';
 
   return (
-    <div className="min-h-screen bg-background text-primaryText flex font-sans selection:bg-accent/30 selection:text-white hacker-grid">
+    <div className="h-full flex overflow-hidden bg-background text-primaryText font-sans selection:bg-accent/30 selection:text-white hacker-grid">
       {/* Sidebar - Desktop */}
       <aside className="w-72 border-r border-border bg-surface/95 hidden md:flex md:flex-col md:justify-between">
         <div className="flex flex-col">
@@ -94,7 +94,7 @@ export const MainLayout: React.FC = () => {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 h-full overflow-hidden">
         <header className="h-14 border-b border-border bg-surface/95 backdrop-blur-sm flex items-center justify-between px-4 md:hidden">
           <div className="flex items-center gap-2.5">
             <div className="w-3.5 h-3.5 rounded-full bg-accent"></div>
@@ -111,8 +111,10 @@ export const MainLayout: React.FC = () => {
           </div>
         </header>
 
-        <main className="flex-1 flex flex-col min-h-0 bg-background overflow-hidden relative pb-16 md:pb-0">
-          <Outlet />
+        <main className="flex-1 flex flex-col min-h-0 h-full bg-background overflow-hidden relative pb-16 md:pb-0">
+          <div className="flex-1 flex flex-col min-h-0 h-full overflow-hidden">
+            <Outlet />
+          </div>
         </main>
 
         <nav

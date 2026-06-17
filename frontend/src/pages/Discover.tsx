@@ -45,7 +45,7 @@ export const Discover: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
+    <div className="flex-1 flex flex-col min-h-0 h-full px-4 md:px-6 py-4 md:py-6 overflow-y-auto overscroll-y-contain">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <Compass className="w-5 h-5 text-accent" />

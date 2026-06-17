@@ -45,7 +45,7 @@ export const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center items-center px-4">
+    <div className="h-dvh overflow-y-auto overscroll-y-contain bg-background flex flex-col justify-center items-center px-4">
       {/* Background grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#1e1e1e_1px,transparent_1px)] [background-size:24px_24px] opacity-20 pointer-events-none" />
 

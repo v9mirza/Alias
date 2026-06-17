@@ -268,7 +268,7 @@ export const Chats: React.FC = () => {
     typingUsers[activeConversationId]?.includes(partner.id);
 
   return (
-    <div className="flex-1 flex min-h-0 bg-background">
+    <div className="flex-1 flex min-h-0 h-full bg-background overflow-hidden">
       {!isConnected && (
         <div className="absolute top-0 inset-x-0 z-50">
           <div className="mx-auto mt-2 max-w-xl rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-[11px] font-mono text-amber-200 text-center">
@@ -299,7 +299,7 @@ export const Chats: React.FC = () => {
             CHATS
           </h2>
         </div>
-        <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-1.5">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain p-2.5 flex flex-col gap-1.5">
           {isLoadingConversations ? (
             <div className="py-12 flex justify-center">
               <Loader label="LOADING CHATS..." />
@@ -340,10 +340,10 @@ export const Chats: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.16 }}
-              className="flex-1 flex flex-col min-h-0"
+              className="flex-1 flex flex-col min-h-0 h-full overflow-hidden"
             >
               {/* Active Chat Header Banner */}
-              <header className="sticky top-0 z-20 p-3 md:p-4 border-b border-border bg-card/70 flex items-center justify-between gap-3">
+              <header className="shrink-0 sticky top-0 z-20 p-3 md:p-4 border-b border-border bg-card/70 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setActiveConversationId(null)}
@@ -472,7 +472,7 @@ export const Chats: React.FC = () => {
               </header>
 
               {/* Message Scroller log */}
-              <div className="flex-1 overflow-y-auto px-3 md:px-6 py-4 space-y-3.5">
+              <div className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain px-3 md:px-6 py-4 space-y-3.5">
                 {isLoadingMessages ? (
                   <div className="py-12 flex justify-center">
                     <Loader label="LOADING MESSAGES..." />
@@ -519,7 +519,7 @@ export const Chats: React.FC = () => {
               )}
  
               {/* Input Footer Form */}
-              <footer className="p-3 md:p-4 border-t border-border bg-surface/30">
+              <footer className="shrink-0 p-3 md:p-4 border-t border-border bg-surface/30">
                 <form onSubmit={handleSend} className="flex items-center gap-2">
                   <input
                     type="text"

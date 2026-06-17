@@ -17,6 +17,12 @@
   --motion-base: 180ms;
 }
 
+html {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   background-color: var(--bg);
@@ -24,7 +30,9 @@ body {
   font-family: 'JetBrains Mono', 'GeistMono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
   line-height: 1.45;
 }
 
@@ -51,7 +59,9 @@ body {
 }
 
 #root {
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
   background-image:
     linear-gradient(rgba(49, 232, 184, 0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(49, 232, 184, 0.025) 1px, transparent 1px);

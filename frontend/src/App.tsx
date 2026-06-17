@@ -28,7 +28,7 @@ const AnimatedRoutes: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -8 }}
         transition={{ duration: 0.18, ease: 'easeOut' }}
-        className="h-full"
+        className="h-full min-h-0 overflow-hidden"
       >
         <Routes location={location}>
           <Route
@@ -127,9 +127,11 @@ export const App: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <Suspense fallback={<Loader fullscreen label="LOADING VIEW..." />}>
-        <AnimatedRoutes />
-      </Suspense>
+      <div className="h-dvh overflow-hidden">
+        <Suspense fallback={<Loader fullscreen label="LOADING VIEW..." />}>
+          <AnimatedRoutes />
+        </Suspense>
+      </div>
     </BrowserRouter>
   );
 };
