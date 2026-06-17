@@ -15,11 +15,10 @@ export default {
         secondaryText: "#A1A1AA",
         accent: "var(--accent)", 
         accentHover: "var(--accent-hover)",
-        accentIndigo: "#6366F1", 
       },
       fontFamily: {
-        sans: ["Inter", "Geist", "sans-serif"],
-        mono: ["GeistMono", "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", "monospace"],
+        sans: ["JetBrains Mono", "GeistMono", "monospace"],
+        mono: ["JetBrains Mono", "GeistMono", "SFMono-Regular", "Consolas", "Liberation Mono", "Menlo", "monospace"],
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

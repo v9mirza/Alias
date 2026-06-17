@@ -3,37 +3,28 @@ import { motion } from 'framer-motion';
 import { Settings as SettingsIcon, ShieldAlert, Palette, LogOut, Info } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore.js';
 import Button from '../components/ui/Button.js';
+import {
+  ACCENT_PALETTE,
+  type AccentId,
+  applyAccentTheme,
+  getStoredAccent,
+  saveAccentTheme,
+} from '../utils/accent.js';
+
+const ACCENT_OPTIONS = Object.keys(ACCENT_PALETTE) as AccentId[];
 
 export const Settings: React.FC = () => {
   const { logout, deleteAccount, isLoading, error, clearError } = useAuthStore();
-  const [accent, setAccent] = useState<'violet' | 'indigo' | 'red'>(
-    (localStorage.getItem('alias_accent') as 'violet' | 'indigo' | 'red') || 'violet'
-  );
+  const [accent, setAccent] = useState<AccentId>(getStoredAccent);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const updateAccentCss = (color: 'violet' | 'indigo' | 'red') => {
-    const root = document.documentElement;
-    if (color === 'violet') {
-      root.style.setProperty('--accent', '#8B5CF6');
-      root.style.setProperty('--accent-hover', '#7C4DF2');
-    } else if (color === 'indigo') {
-      root.style.setProperty('--accent', '#6366F1');
-      root.style.setProperty('--accent-hover', '#4F46E5');
-    } else {
-      root.style.setProperty('--accent', '#E11D48');
-      root.style.setProperty('--accent-hover', '#BE123C');
-    }
-  };
-
-  const applyAccent = (color: 'violet' | 'indigo' | 'red') => {
+  const applyAccent = (color: AccentId) => {
     setAccent(color);
-    localStorage.setItem('alias_accent', color);
-    updateAccentCss(color);
+    saveAccentTheme(color);
   };
 
-  // Run on mount to ensure localstorage configuration is applied
   useEffect(() => {
-    updateAccentCss(accent);
+    applyAccentTheme(accent);
   }, [accent]);
 
   const handleDeleteAccount = async () => {
@@ -59,45 +50,30 @@ export const Settings: React.FC = () => {
       >
         <div className="bg-card/20 border border-border p-4 md:p-6 rounded-2xl space-y-4">
           <h2 className="text-sm font-mono font-bold text-primaryText uppercase flex items-center gap-2">
-            <Palette className="w-4.5 h-4.5 text-accent" /> APPEARANCE
+            <Palette className="w-4.5 h-4.5 text-accent" /> TERMINAL THEME
           </h2>
           <p className="text-xs text-secondaryText font-mono uppercase tracking-tight">
-            Customize the look and feel of the app
+            Phosphor palette for the relay shell
           </p>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-border/40 pt-4">
-            <span className="text-xs text-primaryText font-medium">UI Accent Color</span>
+            <span className="text-xs text-primaryText font-medium font-mono">Accent Color</span>
             <div className="flex gap-2 bg-card border border-border p-1 rounded-xl w-full sm:w-auto">
-              <button
-                onClick={() => applyAccent('violet')}
-                className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
-                  accent === 'violet'
-                    ? 'bg-accent text-[#03100d]'
-                    : 'text-secondaryText hover:text-primaryText'
-                }`}
-              >
-                VIOLET
-              </button>
-              <button
-                onClick={() => applyAccent('indigo')}
-                className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
-                  accent === 'indigo'
-                    ? 'bg-[#6366F1] text-white'
-                    : 'text-secondaryText hover:text-primaryText'
-                }`}
-              >
-                INDIGO
-              </button>
-              <button
-                onClick={() => applyAccent('red')}
-                className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
-                  accent === 'red'
-                    ? 'bg-[#E11D48] text-white'
-                    : 'text-secondaryText hover:text-primaryText'
-                }`}
-              >
-                RED
-              </button>
+              {ACCENT_OPTIONS.map((option) => (
+                <button
+                  key={option}
+                  onClick={() => applyAccent(option)}
+                  className={`flex-1 sm:flex-none min-h-10 px-4 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider transition-all ${
+                    accent === option
+                      ? option === 'green'
+                        ? 'bg-accent text-[#03100d]'
+                        : 'bg-accent text-white'
+                      : 'text-secondaryText hover:text-primaryText'
+                  }`}
+                >
+                  {ACCENT_PALETTE[option].label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
@@ -106,7 +82,7 @@ export const Settings: React.FC = () => {
           <h2 className="text-sm font-mono font-bold text-primaryText uppercase flex items-center gap-2">
             <ShieldAlert className="w-4.5 h-4.5 text-yellow-500" /> SECURITY INFORMATION
           </h2>
-          <div className="text-xs text-secondaryText space-y-2 leading-relaxed">
+          <div className="text-xs text-secondaryText space-y-2 leading-relaxed font-mono">
             <p>• Disappearing chats auto-delete based on configured timers.</p>
             <p>• Login session is local-device scoped. Logging out clears session state.</p>
           </div>

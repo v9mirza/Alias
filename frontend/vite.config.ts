@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'Alias',
         short_name: 'Alias',
-        description: 'Alias chat app with a hacker-inspired aesthetic.',
+        description: 'Anonymous 1:1 chat with a hacker terminal aesthetic.',
         theme_color: '#0A0A0A',
         background_color: '#050505',
         display: 'standalone',

@@ -55,58 +55,61 @@ export const Welcome: React.FC = () => {
         transition={{ duration: 0.35, ease: 'easeOut' }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 font-mono">
           <div className="inline-flex items-center gap-2.5 mb-6">
             <div className="w-5 h-5 rounded-full bg-accent" />
-            <span className="font-mono text-lg font-bold tracking-[0.35em] text-primaryText hacker-text">
+            <span className="text-lg font-bold tracking-[0.35em] text-primaryText hacker-text">
               ALIAS
             </span>
           </div>
 
-          <h1 className="text-xl md:text-2xl font-bold text-primaryText tracking-tight leading-snug">
-            Anonymous 1:1 chat.
-            <br />
-            <span className="text-accent">Connect by alias, not identity.</span>
+          <p className="text-[11px] text-secondaryText uppercase tracking-widest mb-4">
+            $ alias --init anonymous-relay
+          </p>
+
+          <h1 className="text-lg md:text-xl font-bold text-primaryText tracking-tight leading-relaxed">
+            <span className="text-accent">&gt;</span> connect by alias, not identity
+            <span className="terminal-cursor" />
           </h1>
 
-          <p className="mt-3 text-xs text-secondaryText font-mono uppercase tracking-wider">
-            Private relays • Discover profiles • Disappearing chats
+          <p className="mt-3 text-[10px] text-secondaryText uppercase tracking-wider">
+            [private relays] [discover] [disappearing chats]
           </p>
         </div>
 
-        <div className="panel-primary rounded-2xl p-5 md:p-6 space-y-4 mb-6">
+        <div className="panel-primary rounded-2xl p-5 md:p-6 space-y-4 mb-6 font-mono">
           <div className="flex items-start gap-3">
             <Users className="w-4 h-4 text-accent mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs font-mono font-bold text-primaryText uppercase">Discover by alias</p>
+              <p className="text-xs font-bold text-primaryText uppercase">&gt; discover_by_alias</p>
               <p className="text-[11px] text-secondaryText mt-1">Find people through profiles and interests, not real names.</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <MessageSquare className="w-4 h-4 text-accent mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs font-mono font-bold text-primaryText uppercase">Real-time relays</p>
+              <p className="text-xs font-bold text-primaryText uppercase">&gt; realtime_relays</p>
               <p className="text-[11px] text-secondaryText mt-1">Private chats with typing indicators and read receipts.</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Shield className="w-4 h-4 text-accent mt-0.5 shrink-0" />
             <div>
-              <p className="text-xs font-mono font-bold text-primaryText uppercase">Privacy-first</p>
+              <p className="text-xs font-bold text-primaryText uppercase">&gt; privacy_first</p>
               <p className="text-[11px] text-secondaryText mt-1">Temporary conversations that auto-delete on your schedule.</p>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 font-mono">
           <Link to="/login" className="w-full">
-            <Button variant="primary" className="w-full font-mono uppercase tracking-wider">
-              Enter
+            <Button variant="primary" className="w-full uppercase tracking-wider">
+              $ alias login
             </Button>
           </Link>
           <Link to="/register" className="w-full">
-            <Button variant="secondary" className="w-full font-mono uppercase tracking-wider">
-              Create Alias
+            <Button variant="secondary" className="w-full uppercase tracking-wider">
+              $ alias register
             </Button>
           </Link>
 

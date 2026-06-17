@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --accent: #8B5CF6;
-  --accent-hover: #7C4DF2;
+  --accent: #22c55e;
+  --accent-hover: #16a34a;
   --bg: #04070a;
   --surface: #0a1117;
   --card: #0f1820;
@@ -21,7 +21,7 @@ body {
   margin: 0;
   background-color: var(--bg);
   color: var(--text-primary);
-  font-family: 'Inter', 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'JetBrains Mono', 'GeistMono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
@@ -101,5 +101,17 @@ body {
 
   .panel-secondary {
     @apply bg-card/10 border border-border/70 rounded-xl;
+  }
+
+  .terminal-cursor::after {
+    content: '_';
+    color: var(--accent);
+    animation: terminal-blink 1s step-end infinite;
+  }
+}
+
+@keyframes terminal-blink {
+  50% {
+    opacity: 0;
   }
 }
