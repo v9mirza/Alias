@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema(
     lastSeen: {
       type: Date,
       default: Date.now
+    },
+    accent: {
+      type: String,
+      enum: ['green', 'indigo', 'red'],
+      default: 'green'
     }
   },
   {

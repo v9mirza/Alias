@@ -15,6 +15,9 @@ export const updateProfileValidator = [
       }
       return true;
     }),
+  body('accent')
+    .optional()
+    .isIn(['green', 'indigo', 'red']).withMessage('Accent must be green, indigo, or red'),
   validate
 ];
 

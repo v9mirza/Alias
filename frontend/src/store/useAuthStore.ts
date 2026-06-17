@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import api from '../services/api.js';
 import type { User } from '../types/index.js';
+import { syncAccentTheme } from '../utils/accent.js';
 
 interface AuthState {
   user: User | null;
@@ -16,6 +17,25 @@ interface AuthState {
   deleteAccount: () => Promise<void>;
   clearError: () => void;
 }
+
+const mapUser = (user: {
+  id?: string;
+  _id?: string;
+  username: string;
+  bio?: string;
+  interests?: string[];
+  isOnline?: boolean;
+  lastSeen?: string;
+  accent?: string;
+}): User => ({
+  id: user.id || user._id || '',
+  username: user.username,
+  bio: user.bio || '',
+  interests: user.interests || [],
+  isOnline: user.isOnline || false,
+  lastSeen: user.lastSeen || new Date().toISOString(),
+  accent: syncAccentTheme(user.accent),
+});
 
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
@@ -35,14 +55,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       localStorage.setItem('alias_token', token);
       set({
         token,
-        user: {
-          id: user.id,
-          username: user.username,
-          bio: user.bio || '',
-          interests: user.interests || [],
-          isOnline: user.isOnline || false,
-          lastSeen: user.lastSeen || new Date().toISOString()
-        },
+        user: mapUser(user),
         isAuthenticated: true,
         isLoading: false
       });
@@ -65,14 +78,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       localStorage.setItem('alias_token', token);
       set({
         token,
-        user: {
-          id: user.id,
-          username: user.username,
-          bio: user.bio || '',
-          interests: user.interests || [],
-          isOnline: user.isOnline || false,
-          lastSeen: user.lastSeen || new Date().toISOString()
-        },
+        user: mapUser(user),
         isAuthenticated: true,
         isLoading: false
       });
@@ -109,14 +115,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { user } = response.data.data;
       
       set({
-        user: {
-          id: user.id,
-          username: user.username,
-          bio: user.bio || '',
-          interests: user.interests || [],
-          isOnline: user.isOnline || false,
-          lastSeen: user.lastSeen || new Date().toISOString()
-        },
+        user: mapUser(user),
         isAuthenticated: true,
         isLoading: false
       });
@@ -138,14 +137,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { user } = response.data.data;
 
       set({
-        user: {
-          id: user._id || user.id, // Handle backend mongoose return fields
-          username: user.username,
-          bio: user.bio,
-          interests: user.interests,
-          isOnline: user.isOnline,
-          lastSeen: user.lastSeen
-        },
+        user: mapUser(user),
         isLoading: false
       });
     } catch (err: unknown) {

@@ -5,6 +5,7 @@ export interface User {
   interests: string[];
   isOnline: boolean;
   lastSeen: string;
+  accent?: 'green' | 'indigo' | 'red';
   createdAt?: string;
   updatedAt?: string;
 }

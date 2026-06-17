@@ -38,3 +38,9 @@ export const saveAccentTheme = (accent: AccentId) => {
   localStorage.setItem(STORAGE_KEY, accent);
   applyAccentTheme(accent);
 };
+
+export const syncAccentTheme = (value: string | null | undefined): AccentId => {
+  const accent = normalizeAccent(value ?? null);
+  saveAccentTheme(accent);
+  return accent;
+};

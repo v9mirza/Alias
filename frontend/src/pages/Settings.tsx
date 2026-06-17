@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Settings as SettingsIcon, ShieldAlert, Palette, LogOut, Info } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore.js';
 import Button from '../components/ui/Button.js';
+import api from '../services/api.js';
 import {
   ACCENT_PALETTE,
   type AccentId,
-  applyAccentTheme,
   getStoredAccent,
   saveAccentTheme,
 } from '../utils/accent.js';
@@ -14,18 +14,21 @@ import {
 const ACCENT_OPTIONS = Object.keys(ACCENT_PALETTE) as AccentId[];
 
 export const Settings: React.FC = () => {
-  const { logout, deleteAccount, isLoading, error, clearError } = useAuthStore();
-  const [accent, setAccent] = useState<AccentId>(getStoredAccent);
+  const { user, logout, deleteAccount, isLoading, error, clearError } = useAuthStore();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const accent = user?.accent ?? getStoredAccent();
 
-  const applyAccent = (color: AccentId) => {
-    setAccent(color);
+  const applyAccent = async (color: AccentId) => {
     saveAccentTheme(color);
+    try {
+      await api.put('/users/profile', { accent: color });
+      useAuthStore.setState((state) => ({
+        user: state.user ? { ...state.user, accent: color } : state.user,
+      }));
+    } catch (saveError) {
+      console.error('Failed to save accent preference:', saveError);
+    }
   };
-
-  useEffect(() => {
-    applyAccentTheme(accent);
-  }, [accent]);
 
   const handleDeleteAccount = async () => {
     clearError();

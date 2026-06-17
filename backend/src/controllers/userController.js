@@ -37,17 +37,18 @@ export const getProfile = async (req, res, next) => {
  */
 export const updateProfile = async (req, res, next) => {
   try {
-    const { bio, interests } = req.body;
+    const { bio, interests, accent } = req.body;
     const updates = {};
 
     if (bio !== undefined) updates.bio = bio;
     if (interests !== undefined) updates.interests = interests;
+    if (accent !== undefined) updates.accent = accent;
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { $set: updates },
       { new: true, runValidators: true }
-    ).select('username bio interests isOnline lastSeen');
+    ).select('username bio interests isOnline lastSeen accent');
 
     res.status(200).json({
       success: true,

@@ -49,7 +49,8 @@ export const register = async (req, res, next) => {
         token,
         user: {
           id: user._id,
-          username: user.username
+          username: user.username,
+          accent: user.accent
         }
       }
     });
@@ -94,7 +95,8 @@ export const login = async (req, res, next) => {
         token,
         user: {
           id: user._id,
-          username: user.username
+          username: user.username,
+          accent: user.accent
         }
       }
     });
@@ -121,7 +123,8 @@ export const getMe = async (req, res, next) => {
           bio: req.user.bio,
           interests: req.user.interests,
           isOnline: req.user.isOnline,
-          lastSeen: req.user.lastSeen
+          lastSeen: req.user.lastSeen,
+          accent: req.user.accent
         }
       }
     });
