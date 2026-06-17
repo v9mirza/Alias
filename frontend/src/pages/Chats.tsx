@@ -39,9 +39,9 @@ const RemainingTimeBadge: React.FC<{ expiresAt: string }> = ({ expiresAt }) => {
   }, [expiresAt]);
 
   return (
-    <Badge variant="primary" className="text-[9px] py-1 px-2.5 flex items-center gap-1.5 border border-accent/25 bg-accent/10 text-accent font-mono">
-      <Clock className="w-3.5 h-3.5 animate-pulse" />
-      DISAPPEARING CHAT ({timeLeft})
+    <Badge variant="primary" className="text-[9px] py-1 px-2.5 flex items-center gap-1.5 border border-accent/25 bg-accent/10 text-accent font-mono tabular-nums">
+      <Clock className="w-3.5 h-3.5" />
+      {timeLeft}
     </Badge>
   );
 };
@@ -371,12 +371,7 @@ export const Chats: React.FC = () => {
 
                 <div className="flex items-center gap-3 relative" ref={settingsRef}>
                   {activeConv.isTemporary && activeConv.expiresAt && (
-                    <div className="flex flex-col items-end gap-1">
-                      <RemainingTimeBadge expiresAt={activeConv.expiresAt} />
-                      <span className="text-[9px] text-zinc-500 font-mono uppercase tracking-wide">
-                        Auto-cleanup runs every few minutes in dev.
-                      </span>
-                    </div>
+                    <RemainingTimeBadge expiresAt={activeConv.expiresAt} />
                   )}
 
                   <button

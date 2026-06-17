@@ -4,6 +4,7 @@ import { Compass, Inbox, MessageSquare, User as UserIcon, Settings as SettingsIc
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useSocketStore } from '../store/useSocketStore.js';
 import Avatar from '../components/ui/Avatar.js';
+import Logo from '../components/ui/Logo.js';
 
 export const MainLayout: React.FC = () => {
   const { user, logout } = useAuthStore();
@@ -32,7 +33,7 @@ export const MainLayout: React.FC = () => {
       <aside className="w-72 border-r border-border bg-surface/95 hidden md:flex md:flex-col md:justify-between">
         <div className="flex flex-col">
           <div className="px-6 py-6 border-b border-border flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-full bg-accent"></div>
+            <Logo size={32} />
             <span className="font-mono text-sm font-bold tracking-[0.3em] text-primaryText hacker-text">
               ALIAS
             </span>
@@ -97,7 +98,7 @@ export const MainLayout: React.FC = () => {
       <div className="flex-1 flex flex-col min-w-0 min-h-0 h-full overflow-hidden">
         <header className="h-14 border-b border-border bg-surface/95 backdrop-blur-sm flex items-center justify-between px-4 md:hidden">
           <div className="flex items-center gap-2.5">
-            <div className="w-3.5 h-3.5 rounded-full bg-accent"></div>
+            <Logo size={28} />
             <div className="flex flex-col">
               <span className="font-mono text-[10px] font-bold tracking-[0.25em] text-primaryText hacker-text">ALIAS</span>
               <span className="text-[10px] text-secondaryText font-mono">{currentSection}</span>

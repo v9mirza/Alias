@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Download, MessageSquare, Shield, Users } from 'lucide-react';
 import Button from '../components/ui/Button.js';
+import Logo from '../components/ui/Logo.js';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -56,8 +57,8 @@ export const Welcome: React.FC = () => {
         className="w-full max-w-md relative z-10"
       >
         <div className="text-center mb-8 font-mono">
-          <div className="inline-flex items-center gap-2.5 mb-6">
-            <div className="w-5 h-5 rounded-full bg-accent" />
+          <div className="inline-flex items-center gap-3 mb-6">
+            <Logo size={44} />
             <span className="text-lg font-bold tracking-[0.35em] text-primaryText hacker-text">
               ALIAS
             </span>

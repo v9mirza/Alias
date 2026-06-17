@@ -2,7 +2,6 @@ import React from 'react';
 import { Clock } from 'lucide-react';
 import type { Conversation } from '../../types/index.js';
 import Avatar from '../ui/Avatar.js';
-import Badge from '../ui/Badge.js';
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -71,13 +70,12 @@ export const ConversationItem: React.FC<ConversationItemProps> = ({
           {latestMessage ? latestMessage.content : 'No messages yet.'}
         </p>
 
-        <div className="flex items-center gap-1.5 mt-2">
-          {isTemporary && expiresAt && (
-            <Badge variant="primary" className="text-[8px] tracking-widest px-1 py-0.5">
-              <Clock className="w-2.5 h-2.5 mr-1 inline" /> TEMP • {getRemainingTime(expiresAt)}
-            </Badge>
-          )}
-        </div>
+        {isTemporary && expiresAt && (
+          <span className="inline-flex items-center gap-1 mt-1 text-[9px] font-mono text-accent/80 tabular-nums">
+            <Clock className="w-3 h-3" />
+            {getRemainingTime(expiresAt)}
+          </span>
+        )}
       </div>
 
       {unreadCount > 0 && (

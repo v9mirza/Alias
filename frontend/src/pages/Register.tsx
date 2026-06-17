@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/useAuthStore.js';
 import Input from '../components/ui/Input.js';
 import Button from '../components/ui/Button.js';
+import Logo from '../components/ui/Logo.js';
 
 const registerSchema = zod.object({
   username: zod
@@ -55,8 +56,8 @@ export const Register: React.FC = () => {
         transition={{ duration: 0.35, ease: 'easeOut' }}
         className="w-full max-w-[420px] p-8 rounded-2xl bg-surface border border-border/80 shadow-2xl relative z-10"
       >
-        <div className="flex items-center gap-2 mb-8 justify-center">
-          <div className="w-5 h-5 rounded-full bg-accent"></div>
+        <div className="flex items-center gap-3 mb-8 justify-center">
+          <Logo size={40} />
           <span className="font-mono text-base font-bold tracking-[0.25em] text-primaryText">
             ALIAS
           </span>
