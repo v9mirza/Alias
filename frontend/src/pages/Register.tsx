@@ -103,7 +103,7 @@ export const Register: React.FC = () => {
           </Button>
         </form>
 
-        <div className="mt-8 text-center border-t border-border/60 pt-6">
+        <div className="mt-8 text-center border-t border-border/60 pt-6 space-y-3">
           <span className="text-xs text-secondaryText font-mono">
             ALREADY HAVE AN ACCOUNT?{' '}
             <Link
@@ -114,6 +114,15 @@ export const Register: React.FC = () => {
               LOGIN
             </Link>
           </span>
+          <div>
+            <Link
+              to="/"
+              onClick={clearError}
+              className="text-[10px] text-zinc-500 hover:text-secondaryText font-mono uppercase tracking-wider"
+            >
+              ← Back to home
+            </Link>
+          </div>
         </div>
       </motion.div>
     </div>

@@ -8,6 +8,7 @@ import { useSocketStore } from './store/useSocketStore.js';
 import MainLayout from './layouts/MainLayout.js';
 import Loader from './components/ui/Loader.js';
 
+const Welcome = lazy(() => import('./pages/Welcome.js'));
 const Login = lazy(() => import('./pages/Login.js'));
 const Register = lazy(() => import('./pages/Register.js'));
 const Chats = lazy(() => import('./pages/Chats.js'));
@@ -31,6 +32,14 @@ const AnimatedRoutes: React.FC = () => {
       >
         <Routes location={location}>
           <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <Welcome />
+              </PublicRoute>
+            }
+          />
+          <Route
             path="/login"
             element={
               <PublicRoute>
@@ -48,22 +57,20 @@ const AnimatedRoutes: React.FC = () => {
           />
 
           <Route
-            path="/"
             element={
               <ProtectedRoute>
                 <MainLayout />
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="/chats" replace />} />
-            <Route path="chats" element={<Chats />} />
-            <Route path="discover" element={<Discover />} />
-            <Route path="requests" element={<Requests />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="/chats" element={<Chats />} />
+            <Route path="/discover" element={<Discover />} />
+            <Route path="/requests" element={<Requests />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
 
-          <Route path="*" element={<Navigate to="/chats" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
@@ -76,7 +83,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   if (!isAuthenticated || !token) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
