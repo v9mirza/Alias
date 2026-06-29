@@ -43,8 +43,8 @@ conversationSchema.pre('validate', function (next) {
   next();
 });
 
-// Unique index on participants array
-conversationSchema.index({ participants: 1 }, { unique: true });
+// Index on participants array for query performance
+conversationSchema.index({ participants: 1 });
 // Index for checking expiry in cron job
 conversationSchema.index({ expiresAt: 1 }, { sparse: true });
 

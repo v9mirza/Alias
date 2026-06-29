@@ -172,11 +172,7 @@ export const acceptRequest = async (req, res, next) => {
       });
     }
 
-    // 1. Mark request accepted
-    request.status = 'accepted';
-    await request.save();
-
-    // 2. Calculate expiration time if temporary
+    // 1. Calculate expiration time if temporary
     let expiresAt = null;
     if (request.isTemporary) {
       const duration = request.expiryDuration;
@@ -193,7 +189,7 @@ export const acceptRequest = async (req, res, next) => {
       }
     }
 
-    // 3. Create conversation
+    // 2. Create conversation
     // Participants array is sorted in Conversation Schema validate hook
     let conversation;
     try {
@@ -212,6 +208,10 @@ export const acceptRequest = async (req, res, next) => {
         throw err;
       }
     }
+
+    // 3. Mark request accepted
+    request.status = 'accepted';
+    await request.save();
 
     // Emit Socket.IO event to participants
     const io = req.app.get('io');
