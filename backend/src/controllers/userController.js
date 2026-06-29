@@ -75,7 +75,10 @@ export const searchUsers = async (req, res, next) => {
     const skipNum = (pageNum - 1) * limitNum;
     const trimmedQuery = q.trim();
 
-    const baseFilter = { _id: { $ne: req.user._id } };
+    const baseFilter = { 
+      _id: { $ne: req.user._id },
+      username: { $exists: true, $ne: '' }
+    };
 
     if (!trimmedQuery) {
       const users = await User.find(baseFilter).select('username bio interests isOnline lastSeen');

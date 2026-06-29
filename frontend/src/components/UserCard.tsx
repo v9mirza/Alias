@@ -55,7 +55,7 @@ export const UserCard: React.FC<UserCardProps> = ({
         <Avatar username={user.username} size="md" isOnline={user.isOnline} />
         <div className="flex-1 min-w-0">
           <h3 className="font-mono text-sm font-bold text-primaryText truncate tracking-wide">
-            &gt; {user.username}
+            &gt; {user.username || 'anonymous'}
           </h3>
           <p className="text-xs text-secondaryText mt-1.5 line-clamp-2 leading-relaxed">
             {user.bio || 'No bio provided.'}
